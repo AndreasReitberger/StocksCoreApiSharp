@@ -8,6 +8,19 @@ namespace AndreasReitberger.Stocks.Models
     {
 
         #region Properties
+        Guid id = Guid.Empty;
+        public Guid Id
+        {
+            get => id;
+            set
+            {
+                if (id == value)
+                    return;
+                id = value;
+                OnPropertyChanged();
+            }
+        }
+
         string name = "";
         public string Name
         {
@@ -21,6 +34,19 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
+        string symbol = "";
+        public string Symbol
+        {
+            get => symbol;
+            set
+            {
+                if (symbol == value)
+                    return;
+                symbol = value;
+                OnPropertyChanged();
+            }
+        }
+
         string isin = "";
         public string ISIN
         {
@@ -30,6 +56,32 @@ namespace AndreasReitberger.Stocks.Models
                 if (isin == value)
                     return;
                 isin = value;
+                OnPropertyChanged();
+            }
+        }
+
+        string marketplace = "";
+        public string Marketplace
+        {
+            get => marketplace;
+            set
+            {
+                if (marketplace == value)
+                    return;
+                marketplace = value;
+                OnPropertyChanged();
+            }
+        }
+
+        bool isRerfresing = false;
+        public bool IsRerfresing
+        {
+            get => isRerfresing;
+            set
+            {
+                if (isRerfresing == value)
+                    return;
+                isRerfresing = value;
                 OnPropertyChanged();
             }
         }
@@ -60,11 +112,100 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
-        public double EntrancePrice => CalculateEntrancePrice();
-        public double TotalCosts => CalculateTotalCosts();
-        public double TotalDividends => CalculateTotalDividends();
+        double quantity = 0;
+        public double Quantity
+        {
+            get => quantity;
+            set
+            {
+                if (quantity == value)
+                    return;
+                quantity = value;
+                OnPropertyChanged();
+            }
+        }
 
-        public double Growth => CalculateGrowth(); 
+        double entrancePrice = 0;
+        public double EntrancePrice
+        {
+            get => entrancePrice;
+            set
+            {
+                if (entrancePrice == value)
+                    return;
+                entrancePrice = value;
+                OnPropertyChanged();
+            }
+        }
+
+        double totalCosts = 0;
+        public double TotalCosts
+        {
+            get => totalCosts;
+            set
+            {
+                if (totalCosts == value)
+                    return;
+                totalCosts = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(PositiveGrowth));
+            }
+        }
+
+        double totalDividends = 0;
+        public double TotalDividends
+        {
+            get => totalDividends;
+            set
+            {
+                if (totalDividends == value)
+                    return;
+                totalDividends = value;
+                OnPropertyChanged();
+            }
+        }
+
+        double growth = 0;
+        public double Growth
+        {
+            get => growth;
+            set
+            {
+                if (growth == value)
+                    return;
+                growth = value;
+                OnPropertyChanged();
+            }
+        }
+
+        double currentWorth = 0;
+        public double CurrentWorth
+        {
+            get => currentWorth;
+            set
+            {
+                if (currentWorth == value)
+                    return;
+                currentWorth = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(PositiveGrowth));
+            }
+        }
+
+        //public double Quantity => CalculateCurrentAmount();
+        //public double EntrancePrice => CalculateEntrancePrice();
+        //public double TotalCosts => CalculateTotalCosts();
+        //public double TotalDividends => CalculateTotalDividends();
+
+        //public double Growth => CalculateGrowth(); 
+        //public double CurrentWorth => CalculateCurrentWorth(); 
+        public bool PositiveGrowth
+        {
+            get
+            {
+                return TotalCosts <= CurrentWorth;
+            }
+        }
         #endregion
 
         #region Collections
@@ -96,7 +237,52 @@ namespace AndreasReitberger.Stocks.Models
         }
         #endregion
 
+        #region Constructor
+        public Stock()
+        {
+            Id = Guid.NewGuid();
+            Dividends.CollectionChanged += Dividends_CollectionChanged;
+            Transactions.CollectionChanged += Transactions_CollectionChanged;
+        }
+
+        public Stock(Guid id)
+        {
+            Id = id;
+            Dividends.CollectionChanged += Dividends_CollectionChanged;
+            Transactions.CollectionChanged += Transactions_CollectionChanged;
+        }
+        #endregion
+
+        #region Destructor
+        ~Stock()
+        {
+            Dividends.CollectionChanged -= Dividends_CollectionChanged;
+            Transactions.CollectionChanged -= Transactions_CollectionChanged;
+        }
+        #endregion
+
+        #region Events
+        void Transactions_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Refresh();
+        }
+
+        void Dividends_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Refresh();
+        }
+        #endregion
+
         #region Methods
+        public void Refresh()
+        {
+            Quantity = CalculateCurrentAmount();
+            EntrancePrice = CalculateEntrancePrice();
+            TotalCosts = CalculateTotalCosts();
+            TotalDividends = CalculateTotalDividends();
+            Growth = CalculateGrowth();
+            CurrentWorth = CalculateCurrentWorth();
+        }
 
         double CalculateEntrancePrice()
         {
@@ -111,6 +297,22 @@ namespace AndreasReitberger.Stocks.Models
                 CalculateTotalCosts() / amount;
 
             return entrancePrice ?? 0;
+        
+        }
+
+        double CalculateCurrentWorth()
+        {
+            List<Transaction>? bought = Transactions?.Where(transaction => transaction.Type == TransactionType.Buy).ToList();
+
+            //double? price = bought?.Select(transaction => transaction.Total).Sum();
+            double? amount = bought?.Select(transaction => transaction.Amount).Sum();
+
+            //double? entrancePrice = price / amount;
+            double? currentWorth = RespectDividendsForEntrancePrice ?
+                (amount * CurrentRate + CalculateTotalDividends()) :
+                amount * CurrentRate;
+
+            return currentWorth ?? 0;
         
         }
 
@@ -137,14 +339,13 @@ namespace AndreasReitberger.Stocks.Models
                 Transactions?.Where(transaction => transaction.Type == TransactionType.Sell).Select(transaction => transaction.Amount).Sum();
             return currentAmount ?? 0;
         }
-        
-        
+              
         double CalculateGrowth()
         {
             double? currentAmount = CalculateCurrentAmount();
             double? currentWorth = CurrentRate * currentAmount + CalculateTotalDividends();
 
-            double? growth = CalculateTotalCosts() / currentWorth * 100;
+            double? growth = currentWorth / CalculateTotalCosts() * 100 - 100;
             return growth ?? 0;
         }
 

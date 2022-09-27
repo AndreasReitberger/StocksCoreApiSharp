@@ -1,15 +1,36 @@
 ﻿using AndreasReitberger.Core.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AndreasReitberger.Stocks.Models
 {
     public partial class Dividend : BaseModel
     {
         #region Properties
+        Guid id = Guid.Empty;
+        public Guid Id
+        {
+            get => id;
+            set
+            {
+                if (id == value)
+                    return;
+                id = value;
+                OnPropertyChanged();
+            }
+        }
+        
+        Guid? stockId;
+        public Guid? StockId
+        {
+            get => stockId;
+            set
+            {
+                if (stockId == value)
+                    return;
+                stockId = value;
+                OnPropertyChanged();
+            }
+        }
+
         DateTime? dateOfCreation = null;
         public DateTime? DateOfDividend
         {
@@ -60,6 +81,21 @@ namespace AndreasReitberger.Stocks.Models
                 tax = value;
                 OnPropertyChanged();
             }
+        }
+
+        public double Total => AmountOfDividend - Tax;
+        public double TaxPercentage => Tax / (AmountOfDividend / 100);
+        public double Margin => 100 - TaxPercentage;
+        #endregion
+
+        #region Constructor
+        public Dividend()
+        {
+            Id = Guid.NewGuid();
+        }
+        public Dividend(Guid id)
+        {
+            Id = id;
         }
         #endregion
     }

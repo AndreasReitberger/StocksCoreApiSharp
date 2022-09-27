@@ -1,16 +1,36 @@
 ﻿using AndreasReitberger.Core.Utilities;
 using AndreasReitberger.Stocks.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AndreasReitberger.Stocks.Models
 {
     public partial class Transaction : BaseModel
     {
         #region Properties
+        Guid id = Guid.Empty;
+        public Guid Id
+        {
+            get => id;
+            set
+            {
+                if (id == value)
+                    return;
+                id = value;
+                OnPropertyChanged();
+            }
+        }
+
+        Guid? stockId;
+        public Guid? StockId
+        {
+            get => stockId;
+            set
+            {
+                if (stockId == value)
+                    return;
+                stockId = value;
+                OnPropertyChanged();
+            }
+        }
 
         TransactionType? type = null;
         public TransactionType? Type
@@ -64,8 +84,18 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
-        public double Total => Math.Round(Amount * Price, 2); 
+        public double Total => Math.Round(Amount * Price, 2);
         #endregion
 
+        #region Constructor
+        public Transaction()
+        {
+            Id = Guid.NewGuid();
+        }
+        public Transaction(Guid id)
+        {
+            Id = id;
+        }
+        #endregion
     }
 }

@@ -1,14 +1,41 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>AndreasReitberger.Stocks</RootNamespace>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>StocksCoreApiSharp</Title>
+    <Authors>Andreas Reitberger</Authors>
+    <Description>A simple stocks api for our StocksWatch app.</Description>
+    <Copyright>Andreas Reitberger</Copyright>
+    <PackageProjectUrl>https://github.com/AndreasReitberger/StocksCoreApiSharp</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/AndreasReitberger/StocksCoreApiSharp</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>stocks, core, sharp, depot, dividend, api, app</PackageTags>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <FileVersion>1.0.0</FileVersion>
+    <PackageLicenseExpression>apache-2.0</PackageLicenseExpression>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants)TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants)TRACE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="RCoreSharp" Version="1.0.8" />
+	<None Include="..\..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\Chart\" />
+    <Folder Include="Utilities\" />
   </ItemGroup>
 
 </Project>
