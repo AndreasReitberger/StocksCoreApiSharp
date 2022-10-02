@@ -1,5 +1,7 @@
 ﻿using AndreasReitberger.Core.Utilities;
 using AndreasReitberger.Stocks.Enums;
+using AndreasReitberger.Stocks.Models.Events;
+using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.Stocks.Models
@@ -8,7 +10,9 @@ namespace AndreasReitberger.Stocks.Models
     {
 
         #region Properties
+        [JsonProperty(nameof(Id))]
         Guid id = Guid.Empty;
+        [JsonIgnore]
         public Guid Id
         {
             get => id;
@@ -18,6 +22,23 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 id = value;
                 OnPropertyChanged();
+                NotifyListeners();
+            }
+        }
+
+        [JsonProperty(nameof(DepotId))]
+        Guid depotId = Guid.Empty;
+        [JsonIgnore]
+        public Guid DepotId
+        {
+            get => depotId;
+            set
+            {
+                if (depotId == value)
+                    return;
+                depotId = value;
+                OnPropertyChanged();
+                NotifyListeners();
             }
         }
 
@@ -31,6 +52,7 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 name = value;
                 OnPropertyChanged();
+                NotifyListeners();
             }
         }
 
@@ -44,6 +66,7 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 symbol = value;
                 OnPropertyChanged();
+                NotifyListeners();
             }
         }
 
@@ -57,6 +80,21 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 isin = value;
                 OnPropertyChanged();
+                NotifyListeners();
+            }
+        }
+
+        string wkn = "";
+        public string WKN
+        {
+            get => wkn;
+            set
+            {
+                if (wkn == value)
+                    return;
+                wkn = value;
+                OnPropertyChanged();
+                NotifyListeners();
             }
         }
 
@@ -70,6 +108,7 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 marketplace = value;
                 OnPropertyChanged();
+                NotifyListeners();
             }
         }
 
@@ -96,6 +135,7 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 currentRate = value;
                 OnPropertyChanged();
+                NotifyListeners();
             }
         }
 
@@ -109,6 +149,7 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 respectDividendsForEntrancePrice = value;
                 OnPropertyChanged();
+                NotifyListeners();
             }
         }
 
@@ -122,6 +163,7 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 quantity = value;
                 OnPropertyChanged();
+                NotifyListeners();
             }
         }
 
@@ -135,6 +177,7 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 entrancePrice = value;
                 OnPropertyChanged();
+                NotifyListeners();
             }
         }
 
@@ -149,6 +192,7 @@ namespace AndreasReitberger.Stocks.Models
                 totalCosts = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(PositiveGrowth));
+                NotifyListeners();
             }
         }
 
@@ -162,6 +206,7 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 totalDividends = value;
                 OnPropertyChanged();
+                NotifyListeners();
             }
         }
 
@@ -175,6 +220,7 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 growth = value;
                 OnPropertyChanged();
+                NotifyListeners();
             }
         }
 
@@ -189,16 +235,52 @@ namespace AndreasReitberger.Stocks.Models
                 currentWorth = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(PositiveGrowth));
+                NotifyListeners();
             }
         }
 
-        //public double Quantity => CalculateCurrentAmount();
-        //public double EntrancePrice => CalculateEntrancePrice();
-        //public double TotalCosts => CalculateTotalCosts();
-        //public double TotalDividends => CalculateTotalDividends();
+        double volume = 0;
+        public double Volume
+        {
+            get => currentWorth;
+            set
+            {
+                if (volume == value)
+                    return;
+                volume = value;
+                OnPropertyChanged();
+                NotifyListeners();
+            }
+        }
 
-        //public double Growth => CalculateGrowth(); 
-        //public double CurrentWorth => CalculateCurrentWorth(); 
+        double priceOpen = 0;
+        public double PriceOpen
+        {
+            get => priceOpen;
+            set
+            {
+                if (priceOpen == value)
+                    return;
+                priceOpen = value;
+                OnPropertyChanged();
+                NotifyListeners();
+            }
+        }
+
+        double priceClose = 0;
+        public double PriceClose
+        {
+            get => priceClose;
+            set
+            {
+                if (priceClose == value)
+                    return;
+                priceClose = value;
+                OnPropertyChanged();
+                NotifyListeners();
+            }
+        }
+
         public bool PositiveGrowth
         {
             get
@@ -261,19 +343,53 @@ namespace AndreasReitberger.Stocks.Models
         }
         #endregion
 
+        #region EventHandlers
+        public event EventHandler Error;
+        protected virtual void OnError()
+        {
+            Error?.Invoke(this, EventArgs.Empty);
+        }
+        protected virtual void OnError(ErrorEventArgs e)
+        {
+            Error?.Invoke(this, e);
+        }
+        protected virtual void OnError(UnhandledExceptionEventArgs e)
+        {
+            Error?.Invoke(this, e);
+        }
+
+        public event EventHandler<StockChangedEventArgs> StockChanged;
+        protected virtual void OnStockChanged(StockChangedEventArgs e)
+        {
+            StockChanged?.Invoke(this, e);
+        }
+        #endregion
+
         #region Events
         void Transactions_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             Refresh();
+            NotifyListeners();
         }
 
         void Dividends_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             Refresh();
+            NotifyListeners();
         }
         #endregion
 
         #region Methods
+        void NotifyListeners()
+        {
+            OnStockChanged(new()
+            {
+                Id = Id,
+                DepotId = DepotId,
+                Name = Name,
+            });
+        }
+
         public void Refresh()
         {
             Quantity = CalculateCurrentAmount();

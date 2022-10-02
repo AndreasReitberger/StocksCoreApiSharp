@@ -1,11 +1,14 @@
 ﻿using AndreasReitberger.Core.Utilities;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.Stocks.Models
 {
     public partial class Dividend : BaseModel
     {
         #region Properties
+        [JsonProperty(nameof(Id))]
         Guid id = Guid.Empty;
+        [JsonIgnore]
         public Guid Id
         {
             get => id;

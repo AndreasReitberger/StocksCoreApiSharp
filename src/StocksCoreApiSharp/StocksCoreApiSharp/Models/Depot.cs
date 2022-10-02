@@ -1,4 +1,6 @@
 ﻿using AndreasReitberger.Core.Utilities;
+using AndreasReitberger.Stocks.Models.Events;
+using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.Stocks.Models
@@ -6,7 +8,9 @@ namespace AndreasReitberger.Stocks.Models
     public partial class Depot : BaseModel
     {
         #region Properties
+        [JsonProperty(nameof(Id))]
         Guid id = Guid.Empty;
+        [JsonIgnore]
         public Guid Id
         {
             get => id;
@@ -16,6 +20,7 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 id = value;
                 OnPropertyChanged();
+                NotifyListeners();
             }
         }
 
@@ -29,6 +34,7 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 name = value;
                 OnPropertyChanged();
+                NotifyListeners();
             }
         }
 
@@ -42,6 +48,7 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 isPrimaryDepot = value;
                 OnPropertyChanged();
+                NotifyListeners();
             }
         }
 
@@ -56,6 +63,7 @@ namespace AndreasReitberger.Stocks.Models
                 considerDividendsForGrowthCalculation = value;
                 OnPropertyChanged();
                 UpdateStocks();
+                NotifyListeners();
             }
         }
 
@@ -69,6 +77,7 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 dateOfCreation = value;
                 OnPropertyChanged();
+                NotifyListeners();
             }
         }
 
@@ -83,6 +92,7 @@ namespace AndreasReitberger.Stocks.Models
                 totalWorth = value;
                 OnPropertyChanged();
                 CostGrowthRatio = TotalWorth / (TotalCosts / 100);
+                NotifyListeners();
                 //UpdateDependencies();
             }
         }
@@ -98,6 +108,7 @@ namespace AndreasReitberger.Stocks.Models
                 totalCosts = value;
                 OnPropertyChanged();
                 CostGrowthRatio = TotalWorth / (TotalCosts / 100);
+                NotifyListeners();
                 //UpdateDependencies();
             }
         }
@@ -112,13 +123,10 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 costGrowthRatio = value;
                 OnPropertyChanged();
+                NotifyListeners();
                 //UpdateDependencies();
             }
         }
-
-        //public double TotalWorth => CalculateTotalWorth();
-        //public double TotalCosts => CalculateTotalCosts();
-        //public double CostGrowthRatio => TotalWorth / (TotalCosts / 100);
 
         public ObservableCollection<Dividend> OverallDividends => new(Stocks.SelectMany(stock => stock.Dividends));
         #endregion
@@ -173,15 +181,45 @@ namespace AndreasReitberger.Stocks.Models
         }
         #endregion
 
+        #region EventHandlers
+        public event EventHandler Error;
+        protected virtual void OnError()
+        {
+            Error?.Invoke(this, EventArgs.Empty);
+        }
+        protected virtual void OnError(ErrorEventArgs e)
+        {
+            Error?.Invoke(this, e);
+        }
+        protected virtual void OnError(UnhandledExceptionEventArgs e)
+        {
+            Error?.Invoke(this, e);
+        }
+
+        public event EventHandler<DepotChangedEventArgs> DepotChanged;
+        protected virtual void OnDepotChanged(DepotChangedEventArgs e)
+        {
+            DepotChanged?.Invoke(this, e);
+        }
+        #endregion
+
         #region Events
         void Stocks_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             UpdateStocks();
+            NotifyListeners();
         }
         #endregion
 
         #region Methods
-
+        void NotifyListeners()
+        {
+            OnDepotChanged(new()
+            {
+                Id = Id,
+                Name = Name,
+            });
+        }
         public void Refresh()
         {
             UpdateDependencies();
