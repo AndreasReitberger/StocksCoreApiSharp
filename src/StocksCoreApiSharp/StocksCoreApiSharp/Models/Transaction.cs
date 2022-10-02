@@ -1,12 +1,15 @@
 ﻿using AndreasReitberger.Core.Utilities;
 using AndreasReitberger.Stocks.Enums;
+using Newtonsoft.Json;
 
 namespace AndreasReitberger.Stocks.Models
 {
     public partial class Transaction : BaseModel
     {
         #region Properties
+        [JsonProperty(nameof(Id))]
         Guid id = Guid.Empty;
+        [JsonIgnore]
         public Guid Id
         {
             get => id;
