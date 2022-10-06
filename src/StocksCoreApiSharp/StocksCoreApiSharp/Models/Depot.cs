@@ -67,6 +67,20 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
+        DateTime? lastRefresh;
+        public DateTime? LastRefresh
+        {
+            get => lastRefresh;
+            set
+            {
+                if (lastRefresh == value)
+                    return;
+                lastRefresh = value;
+                OnPropertyChanged();
+                NotifyListeners();
+            }
+        }
+
         DateTime? dateOfCreation = null;
         public DateTime? DateOfCreation
         {
@@ -123,11 +137,34 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 costGrowthRatio = value;
                 OnPropertyChanged();
+                Growth = TotalWorth - TotalCosts;
                 NotifyListeners();
                 //UpdateDependencies();
             }
         }
 
+        double growth = 0;
+        public double Growth
+        {
+            get => growth;
+            set
+            {
+                if (growth == value)
+                    return;
+                growth = value;
+                OnPropertyChanged();
+                NotifyListeners();
+                //UpdateDependencies();
+            }
+        }
+        
+        public bool PositiveGrowth
+        {
+            get
+            {
+                return TotalCosts <= TotalWorth;
+            }
+        }
         public ObservableCollection<Dividend> OverallDividends => new(Stocks.SelectMany(stock => stock.Dividends));
         #endregion
 

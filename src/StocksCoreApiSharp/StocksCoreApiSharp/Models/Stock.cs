@@ -125,6 +125,20 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
+        DateTime? lastRefresh;
+        public DateTime? LastRefresh
+        {
+            get => lastRefresh;
+            set
+            {
+                if (lastRefresh == value)
+                    return;
+                lastRefresh = value;
+                OnPropertyChanged();
+                NotifyListeners();
+            }
+        }
+
         double? currentRate;
         public double? CurrentRate
         {
@@ -219,6 +233,20 @@ namespace AndreasReitberger.Stocks.Models
                 if (growth == value)
                     return;
                 growth = value;
+                OnPropertyChanged();
+                NotifyListeners();
+            }
+        }
+
+        double growthPercentage = 0;
+        public double GrowthPercentage
+        {
+            get => growthPercentage;
+            set
+            {
+                if (growthPercentage == value)
+                    return;
+                growthPercentage = value;
                 OnPropertyChanged();
                 NotifyListeners();
             }
@@ -396,8 +424,10 @@ namespace AndreasReitberger.Stocks.Models
             EntrancePrice = CalculateEntrancePrice();
             TotalCosts = CalculateTotalCosts();
             TotalDividends = CalculateTotalDividends();
-            Growth = CalculateGrowth();
             CurrentWorth = CalculateCurrentWorth();
+
+            Growth = CurrentWorth - TotalCosts;
+            GrowthPercentage = CalculateGrowthPercentage();
         }
 
         double CalculateEntrancePrice()
@@ -456,7 +486,7 @@ namespace AndreasReitberger.Stocks.Models
             return currentAmount ?? 0;
         }
               
-        double CalculateGrowth()
+        double CalculateGrowthPercentage()
         {
             double? currentAmount = CalculateCurrentAmount();
             double? currentWorth = CurrentRate * currentAmount + CalculateTotalDividends();
