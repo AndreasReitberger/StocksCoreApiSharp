@@ -2,10 +2,21 @@
 using AndreasReitberger.Stocks.Enums;
 using AndreasReitberger.Stocks.Models.Events;
 using Newtonsoft.Json;
+#if SQLite
+using SQLite;
+using SQLiteNetExtensions.Attributes;
+#endif
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 
 namespace AndreasReitberger.Stocks.Models
 {
+#if SQLite
+    [Table(nameof(Stock) + "s")]
+#endif
     public partial class Stock : BaseModel
     {
 
@@ -13,6 +24,9 @@ namespace AndreasReitberger.Stocks.Models
         [JsonProperty(nameof(Id))]
         Guid id = Guid.Empty;
         [JsonIgnore]
+#if SQLite
+        [PrimaryKey]
+#endif
         public Guid Id
         {
             get => id;
@@ -29,6 +43,9 @@ namespace AndreasReitberger.Stocks.Models
         [JsonProperty(nameof(DepotId))]
         Guid depotId = Guid.Empty;
         [JsonIgnore]
+#if SQLite
+        [ForeignKey(typeof(Depot))]
+#endif
         public Guid DepotId
         {
             get => depotId;
@@ -309,6 +326,9 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
+#if SQLite
+        [Ignore]
+#endif
         public bool PositiveGrowth
         {
             get
@@ -321,6 +341,9 @@ namespace AndreasReitberger.Stocks.Models
         #region Collections
 
         ObservableCollection<Transaction> transactions = new();
+#if SQLite
+        [OneToMany(CascadeOperations = CascadeOperation.All)]
+#endif
         public ObservableCollection<Transaction> Transactions
         {
             get => transactions;
@@ -334,6 +357,9 @@ namespace AndreasReitberger.Stocks.Models
         }
 
         ObservableCollection<Dividend> dividends = new();
+#if SQLite
+        [OneToMany(CascadeOperations = CascadeOperation.All)]
+#endif
         public ObservableCollection<Dividend> Dividends
         {
             get => dividends;

@@ -1,4 +1,6 @@
-﻿namespace AndreasReitberger.Stocks.Models.Events
+﻿using System;
+
+namespace AndreasReitberger.Stocks.Models.Events
 {
     public class DepotChangedEventArgs : EventArgs
     {

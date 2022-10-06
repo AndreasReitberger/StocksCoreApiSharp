@@ -1,14 +1,25 @@
 ﻿using AndreasReitberger.Core.Utilities;
 using Newtonsoft.Json;
+#if SQLite
+using SQLite;
+using SQLiteNetExtensions.Attributes;
+#endif
+using System;
 
 namespace AndreasReitberger.Stocks.Models
 {
+#if SQLite
+    [Table(nameof(Dividend) + "s")]
+#endif
     public partial class Dividend : BaseModel
     {
         #region Properties
         [JsonProperty(nameof(Id))]
         Guid id = Guid.Empty;
         [JsonIgnore]
+#if SQLite
+        [PrimaryKey]
+#endif
         public Guid Id
         {
             get => id;
@@ -22,6 +33,9 @@ namespace AndreasReitberger.Stocks.Models
         }
         
         Guid? stockId;
+#if SQLite
+        [ForeignKey(typeof(Stock))]
+#endif
         public Guid? StockId
         {
             get => stockId;
