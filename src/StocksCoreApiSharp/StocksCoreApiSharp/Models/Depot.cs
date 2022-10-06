@@ -1,15 +1,30 @@
 ﻿using AndreasReitberger.Core.Utilities;
+using AndreasReitberger.Stocks.Models.Database;
 using AndreasReitberger.Stocks.Models.Events;
 using Newtonsoft.Json;
+#if SQLite
+using SQLite;
+using SQLiteNetExtensions.Attributes;
+#endif
+using System;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 
 namespace AndreasReitberger.Stocks.Models
 {
+#if SQLite
+    [Table(nameof(Depot) + "s")]
+#endif
     public partial class Depot : BaseModel
     {
         #region Properties
+
         [JsonProperty(nameof(Id))]
         Guid id = Guid.Empty;
+#if SQLite
+        [PrimaryKey]
+#endif
         [JsonIgnore]
         public Guid Id
         {
@@ -128,11 +143,17 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
+#if SQLite
+        [Ignore]
+#endif
         public ObservableCollection<Dividend> OverallDividends => new(Stocks.SelectMany(stock => stock.Dividends));
         #endregion
 
         #region Collections
         ObservableCollection<Stock> stocks = new();
+#if SQLite
+        [ManyToMany(typeof(StockDepotRelation))]
+#endif
         public ObservableCollection<Stock> Stocks
         {
             get => stocks;
