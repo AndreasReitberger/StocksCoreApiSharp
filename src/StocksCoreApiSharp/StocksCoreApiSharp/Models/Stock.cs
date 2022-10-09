@@ -21,9 +21,9 @@ namespace AndreasReitberger.Stocks.Models
     {
 
         #region Properties
-        [JsonProperty(nameof(Id))]
+        //[JsonProperty(nameof(Id))]
         Guid id = Guid.Empty;
-        [JsonIgnore]
+        //[JsonIgnore]
 #if SQLite
         [PrimaryKey]
 #endif
@@ -40,9 +40,9 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
-        [JsonProperty(nameof(DepotId))]
+        //[JsonProperty(nameof(DepotId))]
         Guid depotId = Guid.Empty;
-        [JsonIgnore]
+        //[JsonIgnore]
 #if SQLite
         [ForeignKey(typeof(Depot))]
 #endif
@@ -519,6 +519,15 @@ namespace AndreasReitberger.Stocks.Models
 
             double? growth = currentWorth / CalculateTotalCosts() * 100 - 100;
             return growth ?? 0;
+        }
+
+        #endregion
+
+        #region Overrides
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
 
         #endregion

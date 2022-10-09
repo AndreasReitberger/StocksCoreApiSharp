@@ -33,11 +33,11 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
-        Guid? stockId;
+        Guid stockId;
 #if SQLite
         [ForeignKey(typeof(Stock))]
 #endif
-        public Guid? StockId
+        public Guid StockId
         {
             get => stockId;
             set
@@ -113,6 +113,15 @@ namespace AndreasReitberger.Stocks.Models
         {
             Id = id;
         }
+        #endregion
+
+        #region Overrides
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
+        }
+
         #endregion
     }
 }

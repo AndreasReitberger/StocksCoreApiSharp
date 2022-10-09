@@ -4,15 +4,16 @@ namespace AndreasReitberger.Stocks.Utilities
     public partial class DatabaseHandler
     {
         #region Instance
-        public static AsyncLazy<DatabaseHandler> InstanceLazy => new(async () =>
+        static DatabaseHandler? _instanceLazy;
+        public static AsyncLazy<DatabaseHandler> InstanceLazy => new(() =>
         {
-            DatabaseHandler instance;
+            //DatabaseHandler instance;
             lock (Lock)
             {
-                instance = new DatabaseHandler();
+                _instanceLazy = new DatabaseHandler();
             }
-            await instance.InitTablesAsync();
-            return instance;
+            //await _instanceLazy.InitTablesAsync();
+            return _instanceLazy;
         });
 
         #endregion

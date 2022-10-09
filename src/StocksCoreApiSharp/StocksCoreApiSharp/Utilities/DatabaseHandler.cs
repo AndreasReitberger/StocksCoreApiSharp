@@ -15,9 +15,9 @@ namespace AndreasReitberger.Stocks.Utilities
     public partial class DatabaseHandler : BaseModel//, IDatabaseHandler
     {
         #region Instance
-        static DatabaseHandler _instance = null;
+        static DatabaseHandler? _instance;
         static readonly object Lock = new();
-        public static DatabaseHandler Instance
+        public static DatabaseHandler? Instance
         {
             get
             {
@@ -186,9 +186,13 @@ namespace AndreasReitberger.Stocks.Utilities
         #endregion
 
         #region Constructor
-        public DatabaseHandler() { }
+        public DatabaseHandler()
+        {
+
+        }
         public DatabaseHandler(string databasePath, bool updateInstance = true)
         {
+            DatabasePath = databasePath;
             DatabaseAsync = new SQLiteAsyncConnection(databasePath);
             Database = new SQLiteConnection(databasePath);
             InitTables();

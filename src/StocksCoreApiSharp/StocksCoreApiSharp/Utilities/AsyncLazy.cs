@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
+﻿using System.Runtime.CompilerServices;
 
 namespace AndreasReitberger.Stocks.Utilities
 {
@@ -8,7 +6,7 @@ namespace AndreasReitberger.Stocks.Utilities
     public class AsyncLazy<T>
     {
         readonly Lazy<Task<T>> instance;
-
+        
         public AsyncLazy(Func<T> factory)
         {
             instance = new Lazy<Task<T>>(() => Task.Run(factory));
@@ -24,4 +22,25 @@ namespace AndreasReitberger.Stocks.Utilities
             return instance.Value.GetAwaiter();
         }
     }
+    /*
+    public class AsyncLazy<S ,T>
+    {
+        readonly Lazy<Task<T>> instance;
+
+        public AsyncLazy(Func<object, T> factory, object parameter)
+        {
+            instance = new Lazy<Task<T>>(() => Task.Run(() => factory(parameter)));
+        }
+
+        public AsyncLazy(Func<object, Task<T>> factory, object parameter)
+        {
+            instance = new Lazy<Task<T>>(() => Task.Run(() => factory(parameter)));
+        }
+        
+        public TaskAwaiter<T> GetAwaiter()
+        {
+            return instance.Value.GetAwaiter();
+        }
+    }
+    */
 }

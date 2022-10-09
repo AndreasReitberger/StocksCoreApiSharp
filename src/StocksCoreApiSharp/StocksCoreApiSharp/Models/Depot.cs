@@ -6,10 +6,7 @@ using Newtonsoft.Json;
 using SQLite;
 using SQLiteNetExtensions.Attributes;
 #endif
-using System;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
 
 namespace AndreasReitberger.Stocks.Models
 {
@@ -20,12 +17,12 @@ namespace AndreasReitberger.Stocks.Models
     {
         #region Properties
 
-        [JsonProperty(nameof(Id))]
+        //[JsonProperty(nameof(Id))]
         Guid id = Guid.Empty;
 #if SQLite
         [PrimaryKey]
 #endif
-        [JsonIgnore]
+        //[JsonIgnore]
         public Guid Id
         {
             get => id;
@@ -158,9 +155,6 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
-#if SQLite
-        [Ignore]
-#endif
         double growth = 0;
         public double Growth
         {
@@ -175,7 +169,10 @@ namespace AndreasReitberger.Stocks.Models
                 //UpdateDependencies();
             }
         }
-        
+
+#if SQLite
+        [Ignore]
+#endif
         public bool PositiveGrowth
         {
             get
@@ -311,6 +308,15 @@ namespace AndreasReitberger.Stocks.Models
             double? costs = Stocks?.Sum(stock => stock.Quantity * stock.EntrancePrice);
             return costs ?? 0;
         }
+        #endregion
+
+        #region Overrides
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
+        }
+
         #endregion
     }
 }

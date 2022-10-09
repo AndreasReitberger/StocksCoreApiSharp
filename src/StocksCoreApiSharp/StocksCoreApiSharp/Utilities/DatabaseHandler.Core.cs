@@ -1,9 +1,7 @@
 ﻿#if SQLite
 using AndreasReitberger.Stocks.Models;
 using SQLiteNetExtensionsAsync.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.Stocks.Utilities
 {
@@ -20,14 +18,18 @@ namespace AndreasReitberger.Stocks.Utilities
             Depots = await DatabaseAsync
                 .GetAllWithChildrenAsync<Depot>(recursive: true)
                 ;
+            // Ensures to recalculate some data
+            Depots.ForEach(depot => depot?.Refresh());
             return Depots;
         }
 
         public async Task<Depot> GetDepotWithChildrenAsync(Guid id)
         {
-            return await DatabaseAsync
+            Depot depot = await DatabaseAsync
                 .GetWithChildrenAsync<Depot>(id, recursive: true)
                 ;
+            depot.Refresh();
+            return depot;
         }
 
         public async Task SetDepotWithChildrenAsync(Depot depot)
@@ -45,7 +47,12 @@ namespace AndreasReitberger.Stocks.Utilities
                 await DatabaseAsync.InsertAllWithChildrenAsync(depots);
         }
 
-        public async Task<int> DeleteMaterialAsync(Depot depot)
+        public async Task SetDepotsWithChildrenAsync(ObservableCollection<Depot> depots, bool replaceExisting = true)
+        {
+            await SetDepotsWithChildrenAsync(depots.ToList(), replaceExisting);
+        }
+
+        public async Task<int> DeleteDepotAsync(Depot depot)
         {
             return await DatabaseAsync.DeleteAsync<Depot>(depot?.Id);
         }
@@ -58,14 +65,18 @@ namespace AndreasReitberger.Stocks.Utilities
             Stocks = await DatabaseAsync
                 .GetAllWithChildrenAsync<Stock>(recursive: true)
                 ;
+            // Ensures to recalculate some data
+            Stocks.ForEach(stock => stock.Refresh());
             return Stocks;
         }
 
         public async Task<Stock> GetStockWithChildrenAsync(Guid id)
         {
-            return await DatabaseAsync
+            Stock stock = await DatabaseAsync
                 .GetWithChildrenAsync<Stock>(id, recursive: true)
                 ;
+            stock.Refresh();
+            return stock;
         }
 
         public async Task SetStocksWithChildrenAsync(List<Stock> stocks, bool replaceExisting = true)
@@ -76,6 +87,11 @@ namespace AndreasReitberger.Stocks.Utilities
                 await DatabaseAsync.InsertAllWithChildrenAsync(stocks);
         }
 
+        public async Task SetStocksWithChildrenAsync(ObservableCollection<Stock> stocks, bool replaceExisting = true)
+        {
+            await SetStocksWithChildrenAsync(stocks.ToList(), replaceExisting);
+        }
+
         public async Task SetStockWithChildrenAsync(Stock stock)
         {
             await DatabaseAsync
@@ -83,11 +99,23 @@ namespace AndreasReitberger.Stocks.Utilities
                 ;
         }
 
-        public async Task<int> DeletePrinterAsync(Stock stock)
+        public async Task<int> DeleteStockAsync(Stock stock)
         {
             return await DatabaseAsync.DeleteAsync<Stock>(stock?.Id);
         }
-
+        public async Task<int[]> DeleteStocksAsync(List<Stock> stocks)
+        {
+            Stack<int> results = new();
+            for (int i = 0; i < stocks?.Count; i++)
+            {
+                results.Push(await DatabaseAsync.DeleteAsync<Stock>(stocks[i]?.Id));
+            }
+            return results.ToArray();
+        }
+        public async Task<int[]> DeleteStocksAsync(ObservableCollection<Stock> stocks)
+        {
+            return await DeleteStocksAsync(stocks.ToList());
+        }
         #endregion
 
         #region Dividends
@@ -120,7 +148,7 @@ namespace AndreasReitberger.Stocks.Utilities
                 await DatabaseAsync.InsertAllWithChildrenAsync(dividends);
         }
 
-        public async Task<int> DeleteMaintenanceAsync(Dividend dividend)
+        public async Task<int> DeleteDividendAsync(Dividend dividend)
         {
             return await DatabaseAsync.DeleteAsync<Dividend>(dividend.Id);
         }
@@ -175,7 +203,7 @@ namespace AndreasReitberger.Stocks.Utilities
                 .DeleteAsync<Transaction>(transaction.Id);
         }
 
-        public async Task<int[]> DeleteCustomersAsync(List<Transaction> transactions)
+        public async Task<int[]> DeleteTransactionsAsync(List<Transaction> transactions)
         {
             Stack<int> results = new();
             for (int i = 0; i < transactions?.Count; i++)
