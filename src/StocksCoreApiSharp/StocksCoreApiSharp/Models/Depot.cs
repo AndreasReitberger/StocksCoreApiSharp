@@ -2,6 +2,7 @@
 using AndreasReitberger.Stocks.Models.Database;
 using AndreasReitberger.Stocks.Models.Events;
 using Newtonsoft.Json;
+using System.Linq;
 #if SQLite
 using SQLite;
 using SQLiteNetExtensions.Attributes;
@@ -278,7 +279,8 @@ namespace AndreasReitberger.Stocks.Models
         }
         public void Refresh()
         {
-            UpdateDependencies();
+            //UpdateDependencies();
+            UpdateStocks();
         }
 
         void UpdateDependencies()
@@ -290,7 +292,7 @@ namespace AndreasReitberger.Stocks.Models
 
         void UpdateStocks()
         {
-            foreach(Stock stock in Stocks)
+            foreach (Stock stock in Stocks)
             {
                 stock.RespectDividendsForEntrancePrice = ConsiderDividendsForGrowthCalculation;
                 stock.Refresh();
