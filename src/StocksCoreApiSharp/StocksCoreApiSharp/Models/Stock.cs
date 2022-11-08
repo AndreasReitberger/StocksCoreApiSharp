@@ -448,7 +448,8 @@ namespace AndreasReitberger.Stocks.Models
         {
             Quantity = CalculateCurrentAmount();
             EntrancePrice = CalculateEntrancePrice();
-            TotalCosts = CalculateTotalCosts();
+            // Avoid negative costs, those will be respected in CurrentWorth calculation
+            TotalCosts = Math.Clamp(CalculateTotalCosts(), 0, double.PositiveInfinity);
             TotalDividends = CalculateTotalDividends();
             CurrentWorth = CalculateCurrentWorth();
 
@@ -474,16 +475,21 @@ namespace AndreasReitberger.Stocks.Models
 
         double CalculateCurrentWorth()
         {
+            /*
             List<Transaction>? bought = Transactions?.Where(transaction => transaction.Type == TransactionType.Buy).ToList();
-
-            //double? price = bought?.Select(transaction => transaction.Total).Sum();
             double? amount = bought?.Select(transaction => transaction.Amount).Sum();
-
+            */
+            double amount = CalculateCurrentAmount();
+            double trading = CalculateTotalCosts();
             //double? entrancePrice = price / amount;
             double? currentWorth = RespectDividendsForEntrancePrice ?
                 (amount * CurrentRate + CalculateTotalDividends()) :
                 amount * CurrentRate;
-
+            // Indicates a win in trading (sold with profits)
+            if(trading < 0)
+            {
+                currentWorth += Math.Abs(trading);
+            }
             return currentWorth ?? 0;
         
         }
@@ -495,6 +501,7 @@ namespace AndreasReitberger.Stocks.Models
 
             double? boughtTotal = bought?.Select(transaction => transaction.Total).Sum();
             double? soldTotal = sold?.Select(transaction => transaction.Total).Sum();
+            // Avoid negative returns
             return (boughtTotal - soldTotal) ?? 0;
         }
         
