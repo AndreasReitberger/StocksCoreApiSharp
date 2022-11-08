@@ -3,6 +3,8 @@ using AndreasReitberger.Stocks.Models.Database;
 using AndreasReitberger.Stocks.Models.Events;
 using Newtonsoft.Json;
 using System.Linq;
+using System;
+using System.IO;
 #if SQLite
 using SQLite;
 using SQLiteNetExtensions.Attributes;

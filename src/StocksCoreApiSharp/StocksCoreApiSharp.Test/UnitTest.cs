@@ -229,5 +229,115 @@ namespace StocksCoreApiSharp.Test
                 Assert.Fail(exc.Message);
             }
         }
+
+        [Test]
+        public void WorthAndGrowthCalculationTest()
+        {
+            Depot myDepot = new("My depot")
+            {
+                DateOfCreation = DateTime.Now,
+            };
+            Stock basf = new()
+            {
+                DepotId = myDepot.Id,
+                Name = "BASF",
+                ISIN = "DE000BASF111",
+                CurrentRate = 41.05,
+            };
+            basf.Transactions.Add(new()
+            {
+                StockId = basf.Id,
+                DateOfCreation = DateTime.Now,
+                Amount = 100,
+                Price = 64.10,
+                Type = TransactionType.Buy,
+            });
+            // Sell with win
+            basf.Transactions.Add(new()
+            {
+                StockId = basf.Id,
+                DateOfCreation = DateTime.Now,
+                Amount = 100,
+                Price = 104.10,
+                Type = TransactionType.Sell,
+            });
+
+            myDepot.Stocks.Add(basf);
+
+            double cost = basf.TotalCosts;
+            Assert.IsTrue(cost >= 0);
+            double worth = basf.CurrentWorth;
+            Assert.IsTrue(worth > 0);
+
+            // Sell with loss
+            myDepot = new("My depot")
+            {
+                DateOfCreation = DateTime.Now,
+            };
+            basf = new()
+            {
+                DepotId = myDepot.Id,
+                Name = "BASF",
+                ISIN = "DE000BASF111",
+                CurrentRate = 41.05,
+            };
+            basf.Transactions.Add(new()
+            {
+                StockId = basf.Id,
+                DateOfCreation = DateTime.Now,
+                Amount = 100,
+                Price = 104.10,
+                Type = TransactionType.Buy,
+            });
+            basf.Transactions.Add(new()
+            {
+                StockId = basf.Id,
+                DateOfCreation = DateTime.Now,
+                Amount = 100,
+                Price = 64.10,
+                Type = TransactionType.Sell,
+            });
+            cost = basf.TotalCosts;
+            Assert.IsTrue(cost >= 0);
+            worth = basf.CurrentWorth;
+            Assert.IsTrue(worth >= 0);
+            var growth = basf.Growth;
+            Assert.Less(growth, 0);
+
+            // Sell with loss
+            myDepot = new("My depot")
+            {
+                DateOfCreation = DateTime.Now,
+            };
+            basf = new()
+            {
+                DepotId = myDepot.Id,
+                Name = "BASF",
+                ISIN = "DE000BASF111",
+                CurrentRate = 41.05,
+            };
+            basf.Transactions.Add(new()
+            {
+                StockId = basf.Id,
+                DateOfCreation = DateTime.Now,
+                Amount = 100,
+                Price = 104.10,
+                Type = TransactionType.Buy,
+            });
+            basf.Transactions.Add(new()
+            {
+                StockId = basf.Id,
+                DateOfCreation = DateTime.Now,
+                Amount = 50,
+                Price = 98.10,
+                Type = TransactionType.Sell,
+            });
+            cost = basf.TotalCosts;
+            Assert.IsTrue(cost >= 0);
+            worth = basf.CurrentWorth;
+            Assert.IsTrue(worth >= 0);
+            growth = basf.Growth;
+            Assert.Less(growth, 0);
+        }
     }
 }
