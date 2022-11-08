@@ -135,6 +135,23 @@ namespace AndreasReitberger.Stocks.Utilities
             }
         }
 
+        List<WatchList> _watchLists = new();
+        public List<WatchList> WatchLists
+        {
+            get => _watchLists;
+            private set
+            {
+                if (_watchLists == value) return;
+                //if (_calculations?.SequenceEqual(value) ?? false) return;
+                _watchLists = value;
+                OnPropertyChanged();
+                OnWatchListsChanged(new WatchListsChangedDatabaseEventArgs()
+                {
+                    WatchLists = value,
+                });
+            }
+        }
+
         List<Stock> _stocks = new();
         public List<Stock> Stocks
         {
@@ -213,8 +230,10 @@ namespace AndreasReitberger.Stocks.Utilities
         public void InitTables()
         {
             Database?.CreateTable<Depot>();
+            Database?.CreateTable<WatchList>();
             Database?.CreateTable<Stock>();
             Database?.CreateTable<StockDepotRelation>();
+            Database?.CreateTable<StockWatchListRelation>();
             Database?.CreateTable<Dividend>();
             Database?.CreateTable<Transaction>();
 
@@ -224,8 +243,10 @@ namespace AndreasReitberger.Stocks.Utilities
         public async Task InitTablesAsync()
         {
             await DatabaseAsync.CreateTableAsync<Depot>();
+            await DatabaseAsync.CreateTableAsync<WatchList>();
             await DatabaseAsync.CreateTableAsync<Stock>();
             await DatabaseAsync.CreateTableAsync<StockDepotRelation>();
+            await DatabaseAsync.CreateTableAsync<StockWatchListRelation>();
             await DatabaseAsync.CreateTableAsync<Dividend>();
             await DatabaseAsync.CreateTableAsync<Transaction>();
 

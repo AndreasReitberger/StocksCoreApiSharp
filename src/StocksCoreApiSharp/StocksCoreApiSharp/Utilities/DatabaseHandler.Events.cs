@@ -25,6 +25,12 @@ namespace AndreasReitberger.Stocks.Utilities
             DepotsChanged?.Invoke(this, e);
         }
 
+        public event EventHandler<WatchListsChangedDatabaseEventArgs> WatchListsChanged;
+        protected virtual void OnWatchListsChanged(WatchListsChangedDatabaseEventArgs e)
+        {
+            WatchListsChanged?.Invoke(this, e);
+        }
+
         public event EventHandler<StocksChangedDatabaseEventArgs> StocksChanged;
         protected virtual void OnStocksChanged(StocksChangedDatabaseEventArgs e)
         {

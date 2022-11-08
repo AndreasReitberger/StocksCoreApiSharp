@@ -40,9 +40,7 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
-        //[JsonProperty(nameof(DepotId))]
         Guid depotId = Guid.Empty;
-        //[JsonIgnore]
 #if SQLite
         [ForeignKey(typeof(Depot))]
 #endif
@@ -54,6 +52,23 @@ namespace AndreasReitberger.Stocks.Models
                 if (depotId == value)
                     return;
                 depotId = value;
+                OnPropertyChanged();
+                NotifyListeners();
+            }
+        }
+
+        Guid watchListId = Guid.Empty;
+#if SQLite
+        [ForeignKey(typeof(WatchList))]
+#endif
+        public Guid WatchListId
+        {
+            get => watchListId;
+            set
+            {
+                if (watchListId == value)
+                    return;
+                watchListId = value;
                 OnPropertyChanged();
                 NotifyListeners();
             }

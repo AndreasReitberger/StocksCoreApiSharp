@@ -63,6 +63,54 @@ namespace AndreasReitberger.Stocks.Utilities
 
         #endregion
 
+        #region WatchLists
+        public async Task<List<WatchList>> GetWatchListsWithChildrenAsync()
+        {
+            // To trigger event
+            WatchLists = await DatabaseAsync
+                .GetAllWithChildrenAsync<WatchList>(recursive: true)
+                ;
+            // Ensures to recalculate some data
+            WatchLists.ForEach(depot => depot?.Refresh());
+            return WatchLists;
+        }
+
+        public async Task<WatchList> GetWatchListWithChildrenAsync(Guid id)
+        {
+            WatchList watchlist = await DatabaseAsync
+                .GetWithChildrenAsync<WatchList>(id, recursive: true)
+                ;
+            watchlist.Refresh();
+            return watchlist;
+        }
+
+        public async Task SetWatchListWithChildrenAsync(WatchList watchlist)
+        {
+            await DatabaseAsync
+                .InsertOrReplaceWithChildrenAsync(watchlist, recursive: true)
+                ;
+        }
+
+        public async Task SetWatchListsWithChildrenAsync(List<WatchList> watchLists, bool replaceExisting = true)
+        {
+            if (replaceExisting)
+                await DatabaseAsync.InsertOrReplaceAllWithChildrenAsync(watchLists);
+            else
+                await DatabaseAsync.InsertAllWithChildrenAsync(watchLists);
+        }
+
+        public async Task SetWatchListsWithChildrenAsync(ObservableCollection<WatchList> watchLists, bool replaceExisting = true)
+        {
+            await SetWatchListsWithChildrenAsync(watchLists.ToList(), replaceExisting);
+        }
+
+        public async Task<int> DeleteWatchListAsync(WatchList watchLists)
+        {
+            return await DatabaseAsync.DeleteAsync<WatchList>(watchLists?.Id);
+        }
+
+        #endregion
+
         #region Stocks
         public async Task<List<Stock>> GetStocksWithChildrenAsync()
         {

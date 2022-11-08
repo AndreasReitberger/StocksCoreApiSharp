@@ -4,6 +4,7 @@ using AndreasReitberger.Stocks.Utilities;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -120,6 +121,11 @@ namespace StocksCoreApiSharp.Test
             try
             {
                 string databasePath = "testdatabase.db";
+                // Start with a clear database
+                if (File.Exists(databasePath))
+                {
+                    File.Delete(databasePath);
+                }
                 DatabaseHandler.Instance = new DatabaseHandler(databasePath);
                 if (DatabaseHandler.Instance.IsInitialized)
                 {
@@ -183,7 +189,6 @@ namespace StocksCoreApiSharp.Test
                         ISIN = "DE0007100000",
                         CurrentRate = 55.60,
                     };
-
                     daimler.Transactions.Add(new()
                     {
                         StockId = daimler.Id,
@@ -222,6 +227,30 @@ namespace StocksCoreApiSharp.Test
                     string jsonDatabase = JsonConvert.SerializeObject(dbDepot, Formatting.Indented);
 
                     //Assert.IsTrue(myDepot == dbDepot);
+                    // Test WatchList
+                    WatchList watchList = new("My Watchlist")
+                    {
+                        DateOfCreation = DateTime.Now,
+                    };
+                    basf.WatchListId = watchList.Id;
+                    watchList.Stocks.Add(basf);
+
+                    daimler.WatchListId = watchList.Id;
+                    watchList.Stocks.Add(daimler);
+
+                    await DatabaseHandler.Instance.SetStocksWithChildrenAsync(watchList.Stocks.ToList(), true);
+                    await DatabaseHandler.Instance.SetWatchListWithChildrenAsync(watchList);
+                    var loadedWatchLists = await DatabaseHandler.Instance.GetWatchListsWithChildrenAsync();
+                    Assert.IsTrue(loadedWatchLists?.Count > 0);
+                    WatchList list = loadedWatchLists?.FirstOrDefault(l => l.Id == watchList.Id);
+                    Assert.IsNotNull(list);
+                    Assert.IsTrue(list.Stocks?.Count == 2);
+
+                    // Check if the updating works
+                    var stocks = await DatabaseHandler.Instance.GetStocksWithChildrenAsync();
+                    Assert.IsTrue(stocks?.Count == 2);
+
+                    await DatabaseHandler.Instance.CloseDatabaseAsync();
                 }
             }
             catch(Exception exc)
@@ -338,6 +367,20 @@ namespace StocksCoreApiSharp.Test
             Assert.IsTrue(worth >= 0);
             growth = basf.Growth;
             Assert.Less(growth, 0);
+        }
+
+        [Test]
+        public void WatchListsTest()
+        {
+            WatchList watchList = new("My Watchlist");
+            Stock basf = new()
+            {
+                DepotId = watchList.Id,
+                Name = "BASF",
+                ISIN = "DE000BASF111",
+                CurrentRate = 41.05,
+            };
+            watchList.Stocks.Add(basf);
         }
     }
 }
