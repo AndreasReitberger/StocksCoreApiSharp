@@ -6,16 +6,16 @@ namespace AndreasReitberger.Stocks.Models.Events
 {
     public class StocksChangedDatabaseEventArgs : DatabaseEventArgs
     {
-        #region Properties
+#region Properties
         public List<Stock> Stocks { get; set; } = new();
-        #endregion
+#endregion
 
-        #region Overrides
+#region Overrides
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
-        #endregion
+#endregion
     }
 }
 #endif

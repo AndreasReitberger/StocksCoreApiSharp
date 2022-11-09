@@ -8,7 +8,7 @@ namespace AndreasReitberger.Stocks.Utilities
     public class AsyncLazy<T>
     {
         readonly Lazy<Task<T>> instance;
-        
+
         public AsyncLazy(Func<T> factory)
         {
             instance = new Lazy<Task<T>>(() => Task.Run(factory));

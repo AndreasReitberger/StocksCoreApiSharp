@@ -31,7 +31,7 @@ namespace AndreasReitberger.Stocks.Models
                 OnPropertyChanged();
             }
         }
-        
+
         Guid stockId;
 #if SQLite
         [ForeignKey(typeof(Stock))]
@@ -115,7 +115,7 @@ namespace AndreasReitberger.Stocks.Models
             Id = id;
         }
         #endregion
-        
+
         #region Overrides
 
         public override string ToString()

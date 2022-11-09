@@ -9,11 +9,11 @@ namespace AndreasReitberger.Stocks.Utilities
         public class DatabaseHandlerBuilder
         {
 
-            #region Instance
+#region Instance
             readonly DatabaseHandler _databaseHandler = new();
-            #endregion
+#endregion
 
-            #region Method
+#region Method
 
             public DatabaseHandler Build()
             {
@@ -48,7 +48,7 @@ namespace AndreasReitberger.Stocks.Utilities
                 return this;
             }
 
-            #endregion
+#endregion
         }
     }
 }
