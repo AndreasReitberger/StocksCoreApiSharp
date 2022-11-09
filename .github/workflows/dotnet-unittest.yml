@@ -1,0 +1,28 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: UnitTests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.100
+    - name: Restore dependencies
+      run: dotnet restore src/StocksCoreApiSharp/StocksCoreApiSharp.Test/StocksCoreApiSharp.Test.csproj
+    - name: Build
+      run: dotnet build -c Release src/StocksCoreApiSharp/StocksCoreApiSharp.Test/StocksCoreApiSharp.Test.csproj
+    - name: Test
+      run: dotnet test -c Release --no-build --verbosity normal src/StocksCoreApiSharp/StocksCoreApiSharp.Test/StocksCoreApiSharp.Test.csproj
