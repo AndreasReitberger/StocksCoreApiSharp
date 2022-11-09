@@ -485,7 +485,7 @@ namespace AndreasReitberger.Stocks.Models
                 CalculateTotalCosts() / amount;
 
             return entrancePrice ?? 0;
-        
+
         }
 
         double CalculateCurrentWorth()
@@ -501,12 +501,12 @@ namespace AndreasReitberger.Stocks.Models
                 (amount * CurrentRate + CalculateTotalDividends()) :
                 amount * CurrentRate;
             // Indicates a win in trading (sold with profits)
-            if(trading < 0)
+            if (trading < 0)
             {
                 currentWorth += Math.Abs(trading);
             }
             return currentWorth ?? 0;
-        
+
         }
 
         double CalculateTotalCosts()
@@ -519,21 +519,21 @@ namespace AndreasReitberger.Stocks.Models
             // Avoid negative returns
             return (boughtTotal - soldTotal) ?? 0;
         }
-        
+
         double CalculateTotalDividends()
         {
             double? price = Dividends?.Select(transaction => (transaction.AmountOfDividend - transaction.Tax)).Sum();
             return price ?? 0;
         }
-        
+
         double CalculateCurrentAmount()
         {
-            double? currentAmount = 
-                Transactions?.Where(transaction => transaction.Type == TransactionType.Buy).Select(transaction => transaction.Amount).Sum() - 
+            double? currentAmount =
+                Transactions?.Where(transaction => transaction.Type == TransactionType.Buy).Select(transaction => transaction.Amount).Sum() -
                 Transactions?.Where(transaction => transaction.Type == TransactionType.Sell).Select(transaction => transaction.Amount).Sum();
             return currentAmount ?? 0;
         }
-              
+
         double CalculateGrowthPercentage()
         {
             double? currentAmount = CalculateCurrentAmount();

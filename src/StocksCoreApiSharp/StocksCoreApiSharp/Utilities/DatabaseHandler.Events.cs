@@ -6,7 +6,7 @@ namespace AndreasReitberger.Stocks.Utilities
 {
     public partial class DatabaseHandler
     {
-        #region Events
+#region Events
         public event EventHandler<DatabaseEventArgs> DataChanged;
         protected virtual void OnDataChanged(DatabaseEventArgs e)
         {
@@ -50,7 +50,7 @@ namespace AndreasReitberger.Stocks.Utilities
         }
 
 
-        #endregion
+#endregion
     }
 }
 #endif

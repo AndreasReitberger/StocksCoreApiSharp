@@ -109,7 +109,7 @@ namespace StocksCoreApiSharp.Test
                 var totalDepotWorth = myDepot.TotalWorth;
                 var overallDividends = myDepot.OverallDividends;
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 Assert.Fail(exc.Message);
             }
@@ -253,7 +253,7 @@ namespace StocksCoreApiSharp.Test
                     await DatabaseHandler.Instance.CloseDatabaseAsync();
                 }
             }
-            catch(Exception exc)
+            catch (Exception exc)
             {
                 Assert.Fail(exc.Message);
             }
