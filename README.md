@@ -3,6 +3,10 @@ This is the core C# library to manage stocks for our [StocksWatch](https://githu
 
 [![.NET](https://github.com/AndreasReitberger/StocksCoreApiSharp/actions/workflows/dotnet-unittest.yml/badge.svg)]([https://github.com/Robinterra/LemonMarkets/actions/workflows/dotnet-unittest.yml](https://github.com/AndreasReitberger/StocksCoreApiSharp/actions/workflows/dotnet-unittest.yml))
 
+# Nuget
+[![NuGet](https://img.shields.io/nuget/v/StocksCoreApiSharp.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/StocksCoreApiSharp/)
+[![NuGet](https://img.shields.io/nuget/dt/StocksCoreApiSharp.svg)](https://www.nuget.org/packages/StocksCoreApiSharp)
+
 # Usage
 
 ## Depots & Watchlists
