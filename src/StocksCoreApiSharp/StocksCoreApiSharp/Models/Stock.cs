@@ -539,6 +539,9 @@ namespace AndreasReitberger.Stocks.Models
             double? currentAmount = CalculateCurrentAmount();
             double? currentWorth = CurrentRate * currentAmount + CalculateTotalDividends();
 
+            // Avoid wrong calculations if the stock actually have been sold and no growth calculation is possible then.
+            if (currentAmount == 0 || currentWorth == 0) return 0;
+
             double? growth = currentWorth / CalculateTotalCosts() * 100 - 100;
             return growth ?? 0;
         }
