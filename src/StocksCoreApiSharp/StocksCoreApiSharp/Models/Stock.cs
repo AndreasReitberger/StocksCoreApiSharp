@@ -514,7 +514,7 @@ namespace AndreasReitberger.Stocks.Models
 
         void UpdateChangedIndicator()
         {
-            if(CurrentRate == PriceOpen)
+            if (CurrentRate == PriceOpen)
             {
                 ChangedIndicator = ValueChangedIndicator.Unchanged;
             }
