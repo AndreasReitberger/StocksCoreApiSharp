@@ -1,6 +1,7 @@
 ﻿#if SQLite
 using AndreasReitberger.Core.Utilities;
 using AndreasReitberger.Stocks.Models;
+using AndreasReitberger.Stocks.Models.Additions;
 using AndreasReitberger.Stocks.Models.Database;
 using AndreasReitberger.Stocks.Models.Events;
 using SQLite;
@@ -232,8 +233,10 @@ namespace AndreasReitberger.Stocks.Utilities
             Database?.CreateTable<Depot>();
             Database?.CreateTable<WatchList>();
             Database?.CreateTable<Stock>();
+            Database?.CreateTable<StockPriceRange>();
             Database?.CreateTable<StockDepotRelation>();
             Database?.CreateTable<StockWatchListRelation>();
+            Database?.CreateTable<StockDividendAppointment>();
             Database?.CreateTable<Dividend>();
             Database?.CreateTable<Transaction>();
 
@@ -245,8 +248,10 @@ namespace AndreasReitberger.Stocks.Utilities
             await DatabaseAsync.CreateTableAsync<Depot>();
             await DatabaseAsync.CreateTableAsync<WatchList>();
             await DatabaseAsync.CreateTableAsync<Stock>();
+            await DatabaseAsync.CreateTableAsync<StockPriceRange>();
             await DatabaseAsync.CreateTableAsync<StockDepotRelation>();
             await DatabaseAsync.CreateTableAsync<StockWatchListRelation>();
+            await DatabaseAsync.CreateTableAsync<StockDividendAppointment>();
             await DatabaseAsync.CreateTableAsync<Dividend>();
             await DatabaseAsync.CreateTableAsync<Transaction>();
 

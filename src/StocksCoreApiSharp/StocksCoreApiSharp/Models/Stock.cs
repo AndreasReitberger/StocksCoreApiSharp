@@ -1,16 +1,13 @@
 ﻿using AndreasReitberger.Core.Utilities;
 using AndreasReitberger.Stocks.Enums;
+using AndreasReitberger.Stocks.Models.Additions;
 using AndreasReitberger.Stocks.Models.Events;
 using Newtonsoft.Json;
 #if SQLite
 using SQLite;
 using SQLiteNetExtensions.Attributes;
 #endif
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
 
 namespace AndreasReitberger.Stocks.Models
 {
@@ -21,9 +18,7 @@ namespace AndreasReitberger.Stocks.Models
     {
 
         #region Properties
-        //[JsonProperty(nameof(Id))]
         Guid id = Guid.Empty;
-        //[JsonIgnore]
 #if SQLite
         [PrimaryKey]
 #endif
@@ -182,6 +177,7 @@ namespace AndreasReitberger.Stocks.Models
                 currentRate = value;
                 OnPropertyChanged();
                 NotifyListeners();
+                UpdateChangedIndicator();
             }
         }
 
@@ -224,6 +220,7 @@ namespace AndreasReitberger.Stocks.Models
                 entrancePrice = value;
                 OnPropertyChanged();
                 NotifyListeners();
+                UpdateChangedIndicator();
             }
         }
 
@@ -313,11 +310,14 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
-        double priceOpen = 0;
-        public double PriceOpen
+        double? priceOpen = 0;
+#if SQLite
+        [Ignore]
+#endif
+        public double? PriceOpen
         {
             get => priceOpen;
-            set
+            private set
             {
                 if (priceOpen == value)
                     return;
@@ -327,15 +327,51 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
-        double priceClose = 0;
-        public double PriceClose
+        double? priceClose = 0;
+#if SQLite
+        [Ignore]
+#endif
+        public double? PriceClose
         {
             get => priceClose;
-            set
+            private set
             {
                 if (priceClose == value)
                     return;
                 priceClose = value;
+                OnPropertyChanged();
+                NotifyListeners();
+            }
+        }
+
+        double? change = 0;
+#if SQLite
+        [Ignore]
+#endif
+        public double? Change
+        {
+            get => change;
+            private set
+            {
+                if (change == value)
+                    return;
+                change = value;
+                OnPropertyChanged();
+            }
+        }
+
+        ValueChangedIndicator changedIndicator = ValueChangedIndicator.Unchanged;
+#if SQLite
+        [Ignore]
+#endif
+        public ValueChangedIndicator ChangedIndicator
+        {
+            get => changedIndicator;
+            private set
+            {
+                if (changedIndicator == value)
+                    return;
+                changedIndicator = value;
                 OnPropertyChanged();
                 NotifyListeners();
             }
@@ -384,6 +420,23 @@ namespace AndreasReitberger.Stocks.Models
                     return;
                 dividends = value;
                 OnPropertyChanged();
+            }
+        }
+
+        ObservableCollection<StockPriceRange> priceRanges = new();
+#if SQLite
+        [OneToMany(CascadeOperations = CascadeOperation.All)]
+#endif
+        public ObservableCollection<StockPriceRange> PriceRanges
+        {
+            get => priceRanges;
+            set
+            {
+                if (priceRanges == value)
+                    return;
+                priceRanges = value;
+                OnPropertyChanged();
+                UpdateOpenClosePrices();
             }
         }
         #endregion
@@ -457,6 +510,28 @@ namespace AndreasReitberger.Stocks.Models
                 DepotId = DepotId,
                 Name = Name,
             });
+        }
+
+        void UpdateChangedIndicator()
+        {
+            if(CurrentRate == PriceOpen)
+            {
+                ChangedIndicator = ValueChangedIndicator.Unchanged;
+            }
+            else
+            {
+                ChangedIndicator = CurrentRate > PriceOpen ? ValueChangedIndicator.Increased : ValueChangedIndicator.Decreased;
+            }
+        }
+
+        void UpdateOpenClosePrices()
+        {
+            var priceRange = PriceRanges?.LastOrDefault();
+            PriceClose = priceRange?.Close ?? CurrentRate;
+            PriceOpen = priceRange?.Open ?? CurrentRate;
+            // Change since the laste open
+            Change = CurrentRate - PriceOpen;
+            UpdateChangedIndicator();
         }
 
         public void Refresh()

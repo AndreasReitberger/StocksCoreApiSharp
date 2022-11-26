@@ -174,6 +174,26 @@ namespace StocksCoreApiSharp.Test
                         Quantity = 100,
                         Tax = 300,
                     });
+                    basf.PriceRanges.Add(new()
+                    {
+                        StockId = basf.Id,
+                        Date = DateTime.Now,
+                        Close = 51.51,
+                        Open = 49.98,
+                        Volume = 2161516,
+                        High = 53.45,
+                        Low = 46.46,
+                    });
+                    basf.PriceRanges.Add(new()
+                    {
+                        StockId = basf.Id,
+                        Date = DateTime.Now.AddDays(-1),
+                        Close = 50.51,
+                        Open = 53.56,
+                        Volume = 6456321,
+                        High = 51.44,
+                        Low = 49.41,
+                    });
 
                     var total = basf.TotalCosts;
                     var entryPrice = basf.EntrancePrice;
@@ -223,6 +243,8 @@ namespace StocksCoreApiSharp.Test
 
                     Depot? dbDepot = await DatabaseHandler.Instance.GetDepotWithChildrenAsync(myDepot.Id);
                     Assert.IsNotNull(dbDepot);
+                    Assert.IsTrue(dbDepot?.Stocks.First().PriceRanges.Count == 2);
+
                     string jsonOriginal = JsonConvert.SerializeObject(myDepot, Formatting.Indented);
                     string jsonDatabase = JsonConvert.SerializeObject(dbDepot, Formatting.Indented);
 
@@ -296,7 +318,7 @@ namespace StocksCoreApiSharp.Test
             double cost = basf.TotalCosts;
             Assert.IsTrue(cost >= 0);
             double worth = basf.CurrentWorth;
-            Assert.IsTrue(worth > 0);
+            Assert.That(worth > 0, Is.True);
 
             // Sell with loss
             myDepot = new("My depot")

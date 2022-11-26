@@ -1,21 +1,18 @@
 ﻿#if SQLite
 using AndreasReitberger.Stocks.Models;
+using AndreasReitberger.Stocks.Models.Additions;
 using SQLiteNetExtensionsAsync.Extensions;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AndreasReitberger.Stocks.Utilities
 {
     public partial class DatabaseHandler
     {
-#region Methods
+        #region Methods
 
-#region Public
+        #region Public
 
-#region Depots
+        #region Depots
         public async Task<List<Depot>> GetDepotsWithChildrenAsync()
         {
             // To trigger event
@@ -63,7 +60,7 @@ namespace AndreasReitberger.Stocks.Utilities
 
 #endregion
 
-#region WatchLists
+        #region WatchLists
         public async Task<List<WatchList>> GetWatchListsWithChildrenAsync()
         {
             // To trigger event
@@ -109,9 +106,9 @@ namespace AndreasReitberger.Stocks.Utilities
             return await DatabaseAsync.DeleteAsync<WatchList>(watchLists?.Id);
         }
 
-#endregion
+        #endregion
 
-#region Stocks
+        #region Stocks
         public async Task<List<Stock>> GetStocksWithChildrenAsync()
         {
             Stocks = await DatabaseAsync
@@ -168,7 +165,63 @@ namespace AndreasReitberger.Stocks.Utilities
         {
             return await DeleteStocksAsync(stocks.ToList());
         }
-#endregion
+        #endregion
+
+        #region StockPriceRanges
+        public async Task<List<StockPriceRange>> GetStockPriceRangesWithChildrenAsync()
+        {
+            List<StockPriceRange> stockPriceRanges = await DatabaseAsync
+                .GetAllWithChildrenAsync<StockPriceRange>(recursive: true)
+                ;
+            return stockPriceRanges;
+        }
+
+        public async Task<StockPriceRange> GetStockPriceRangeWithChildrenAsync(Guid id)
+        {
+            StockPriceRange stockPriceRange = await DatabaseAsync
+                .GetWithChildrenAsync<StockPriceRange>(id, recursive: true)
+                ;
+            return stockPriceRange;
+        }
+
+        public async Task SetStockPriceRangesWithChildrenAsync(List<StockPriceRange> stockPriceRanges, bool replaceExisting = true)
+        {
+            if (replaceExisting)
+                await DatabaseAsync.InsertOrReplaceAllWithChildrenAsync(stockPriceRanges);
+            else
+                await DatabaseAsync.InsertAllWithChildrenAsync(stockPriceRanges);
+        }
+
+        public async Task SetStockPriceRangesWithChildrenAsync(ObservableCollection<StockPriceRange> stockPriceRanges, bool replaceExisting = true)
+        {
+            await SetStockPriceRangesWithChildrenAsync(stockPriceRanges.ToList(), replaceExisting);
+        }
+
+        public async Task SetStockPriceRangeWithChildrenAsync(StockPriceRange stockPriceRange)
+        {
+            await DatabaseAsync
+                .InsertOrReplaceWithChildrenAsync(stockPriceRange, recursive: true)
+                ;
+        }
+
+        public async Task<int> DeleteStockPriceRangeAsync(StockPriceRange stockPriceRange)
+        {
+            return await DatabaseAsync.DeleteAsync<StockPriceRange>(stockPriceRange?.Id);
+        }
+        public async Task<int[]> DeleteStockPriceRangesAsync(List<StockPriceRange> stockPriceRanges)
+        {
+            Stack<int> results = new();
+            for (int i = 0; i < stockPriceRanges?.Count; i++)
+            {
+                results.Push(await DatabaseAsync.DeleteAsync<StockPriceRange>(stockPriceRanges[i]?.Id));
+            }
+            return results.ToArray();
+        }
+        public async Task<int[]> DeleteStockPriceRangesAsync(ObservableCollection<StockPriceRange> stockPriceRanges)
+        {
+            return await DeleteStockPriceRangesAsync(stockPriceRanges.ToList());
+        }
+        #endregion
 
 #region Dividends
         public async Task<List<Dividend>> GetDividendsWithChildrenAsync()
