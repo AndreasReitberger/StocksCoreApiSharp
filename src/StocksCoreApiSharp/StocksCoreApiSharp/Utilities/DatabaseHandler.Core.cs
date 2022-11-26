@@ -8,11 +8,11 @@ namespace AndreasReitberger.Stocks.Utilities
 {
     public partial class DatabaseHandler
     {
-        #region Methods
+#region Methods
 
-        #region Public
+#region Public
 
-        #region Depots
+#region Depots
         public async Task<List<Depot>> GetDepotsWithChildrenAsync()
         {
             // To trigger event
@@ -60,7 +60,7 @@ namespace AndreasReitberger.Stocks.Utilities
 
 #endregion
 
-        #region WatchLists
+#region WatchLists
         public async Task<List<WatchList>> GetWatchListsWithChildrenAsync()
         {
             // To trigger event
@@ -106,9 +106,9 @@ namespace AndreasReitberger.Stocks.Utilities
             return await DatabaseAsync.DeleteAsync<WatchList>(watchLists?.Id);
         }
 
-        #endregion
+#endregion
 
-        #region Stocks
+#region Stocks
         public async Task<List<Stock>> GetStocksWithChildrenAsync()
         {
             Stocks = await DatabaseAsync
@@ -165,9 +165,9 @@ namespace AndreasReitberger.Stocks.Utilities
         {
             return await DeleteStocksAsync(stocks.ToList());
         }
-        #endregion
+#endregion
 
-        #region StockPriceRanges
+#region StockPriceRanges
         public async Task<List<StockPriceRange>> GetStockPriceRangesWithChildrenAsync()
         {
             List<StockPriceRange> stockPriceRanges = await DatabaseAsync
@@ -221,7 +221,7 @@ namespace AndreasReitberger.Stocks.Utilities
         {
             return await DeleteStockPriceRangesAsync(stockPriceRanges.ToList());
         }
-        #endregion
+#endregion
 
 #region Dividends
         public async Task<List<Dividend>> GetDividendsWithChildrenAsync()
