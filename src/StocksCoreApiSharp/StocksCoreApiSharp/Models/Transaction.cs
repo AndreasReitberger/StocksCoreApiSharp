@@ -1,5 +1,6 @@
 ﻿using AndreasReitberger.Core.Utilities;
 using AndreasReitberger.Stocks.Enums;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 #if SQLite
 using SQLite;
@@ -12,94 +13,34 @@ namespace AndreasReitberger.Stocks.Models
 #if SQLite
     [Table(nameof(Transaction) + "s")]
 #endif
-    public partial class Transaction : BaseModel
+    [ObservableObject]
+    public partial class Transaction
     {
         #region Properties
-        [JsonProperty(nameof(Id))]
+
+        [ObservableProperty]
+#if SQLite
+        [property: PrimaryKey]
+#endif
         Guid id = Guid.Empty;
-        [JsonIgnore]
-#if SQLite
-        [PrimaryKey]
-#endif
-        public Guid Id
-        {
-            get => id;
-            set
-            {
-                if (id == value)
-                    return;
-                id = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
+#if SQLite
+        [property: ForeignKey(typeof(Stock))]
+#endif
         Guid stockId;
-#if SQLite
-        [ForeignKey(typeof(Stock))]
-#endif
-        public Guid StockId
-        {
-            get => stockId;
-            set
-            {
-                if (stockId == value)
-                    return;
-                stockId = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         TransactionType? type = null;
-        public TransactionType? Type
-        {
-            get => type;
-            set
-            {
-                if (type == value)
-                    return;
-                type = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         DateTime? dateOfCreation = null;
-        public DateTime? DateOfCreation
-        {
-            get => dateOfCreation;
-            set
-            {
-                if (dateOfCreation == value)
-                    return;
-                dateOfCreation = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         double amount = 0;
-        public double Amount
-        {
-            get => amount;
-            set
-            {
-                if (amount == value)
-                    return;
-                amount = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         double price = 0;
-        public double Price
-        {
-            get => price;
-            set
-            {
-                if (price == value)
-                    return;
-                price = value;
-                OnPropertyChanged();
-            }
-        }
 
         public double Total => Math.Round(Amount * Price, 2);
         #endregion

@@ -101,9 +101,57 @@ namespace AndreasReitberger.Stocks.Utilities
             await SetWatchListsWithChildrenAsync(watchLists.ToList(), replaceExisting);
         }
 
-        public async Task<int> DeleteWatchListAsync(WatchList watchLists)
+        public async Task<int> DeleteWatchListAsync(WatchList watchList)
         {
-            return await DatabaseAsync.DeleteAsync<WatchList>(watchLists?.Id);
+            return await DatabaseAsync.DeleteAsync<WatchList>(watchList?.Id);
+        }
+
+#endregion
+
+#region Marketplaces
+        public async Task<List<Marketplace>> GetMarketplacesWithChildrenAsync()
+        {
+            // To trigger event
+            Marketplaces = await DatabaseAsync
+                .GetAllWithChildrenAsync<Marketplace>(recursive: true)
+                ;
+            // Ensures to recalculate some data
+            Marketplaces.ForEach(depot => depot?.Refresh());
+            return Marketplaces;
+        }
+
+        public async Task<Marketplace> GetMarketplaceWithChildrenAsync(Guid id)
+        {
+            Marketplace marketplace = await DatabaseAsync
+                .GetWithChildrenAsync<Marketplace>(id, recursive: true)
+                ;
+            marketplace.Refresh();
+            return marketplace;
+        }
+
+        public async Task SetMarketplaceWithChildrenAsync(Marketplace marketplace)
+        {
+            await DatabaseAsync
+                .InsertOrReplaceWithChildrenAsync(marketplace, recursive: true)
+                ;
+        }
+
+        public async Task SetMarketplacesWithChildrenAsync(List<Marketplace> marketplaces, bool replaceExisting = true)
+        {
+            if (replaceExisting)
+                await DatabaseAsync.InsertOrReplaceAllWithChildrenAsync(marketplaces);
+            else
+                await DatabaseAsync.InsertAllWithChildrenAsync(marketplaces);
+        }
+
+        public async Task SetMarketplacesWithChildrenAsync(ObservableCollection<Marketplace> marketplaces, bool replaceExisting = true)
+        {
+            await SetMarketplacesWithChildrenAsync(marketplaces.ToList(), replaceExisting);
+        }
+
+        public async Task<int> DeleteMarketplaceAsync(Marketplace marketplace)
+        {
+            return await DatabaseAsync.DeleteAsync<Marketplace>(marketplace?.Id);
         }
 
 #endregion

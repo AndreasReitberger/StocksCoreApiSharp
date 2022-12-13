@@ -1,7 +1,7 @@
-﻿using AndreasReitberger.Core.Utilities;
-using AndreasReitberger.Stocks.Enums;
+﻿using AndreasReitberger.Stocks.Enums;
 using AndreasReitberger.Stocks.Models.Additions;
 using AndreasReitberger.Stocks.Models.Events;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 #if SQLite
 using SQLite;
@@ -14,157 +14,69 @@ namespace AndreasReitberger.Stocks.Models
 #if SQLite
     [Table(nameof(Stock) + "s")]
 #endif
-    public partial class Stock : BaseModel
+    [ObservableObject]
+    public partial class Stock// : BaseModel
     {
 
         #region Properties
+        [ObservableProperty]
+#if SQLite
+        [property: PrimaryKey]
+#endif
         Guid id = Guid.Empty;
-#if SQLite
-        [PrimaryKey]
-#endif
-        public Guid Id
-        {
-            get => id;
-            set
-            {
-                if (id == value)
-                    return;
-                id = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
 
+        [ObservableProperty]
+#if SQLite
+        [property: ForeignKey(typeof(Depot))]
+#endif
         Guid depotId = Guid.Empty;
-#if SQLite
-        [ForeignKey(typeof(Depot))]
-#endif
-        public Guid DepotId
-        {
-            get => depotId;
-            set
-            {
-                if (depotId == value)
-                    return;
-                depotId = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
 
+        [ObservableProperty]
+#if SQLite
+        [property: ForeignKey(typeof(WatchList))]
+#endif
         Guid watchListId = Guid.Empty;
+
+        [ObservableProperty]
 #if SQLite
-        [ForeignKey(typeof(WatchList))]
+        [property: ForeignKey(typeof(Marketplace))]
 #endif
-        public Guid WatchListId
-        {
-            get => watchListId;
-            set
-            {
-                if (watchListId == value)
-                    return;
-                watchListId = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
+        Guid marketplaceId = Guid.Empty;
 
+        [ObservableProperty]
         string name = "";
-        public string Name
-        {
-            get => name;
-            set
-            {
-                if (name == value)
-                    return;
-                name = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
 
+        [ObservableProperty]
         string symbol = "";
-        public string Symbol
-        {
-            get => symbol;
-            set
-            {
-                if (symbol == value)
-                    return;
-                symbol = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
 
-        string isin = "";
-        public string ISIN
-        {
-            get => isin;
-            set
-            {
-                if (isin == value)
-                    return;
-                isin = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
+        [ObservableProperty]
+        string iSIN = "";
 
-        string wkn = "";
-        public string WKN
-        {
-            get => wkn;
-            set
-            {
-                if (wkn == value)
-                    return;
-                wkn = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
+        [ObservableProperty]
+        string wKN = "";
 
+        [ObservableProperty]
         string marketplace = "";
-        public string Marketplace
-        {
-            get => marketplace;
-            set
-            {
-                if (marketplace == value)
-                    return;
-                marketplace = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
 
+        [ObservableProperty]
         bool isRerfresing = false;
-        public bool IsRerfresing
-        {
-            get => isRerfresing;
-            set
-            {
-                if (isRerfresing == value)
-                    return;
-                isRerfresing = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
         DateTime? lastRefresh;
-        public DateTime? LastRefresh
-        {
-            get => lastRefresh;
-            set
-            {
-                if (lastRefresh == value)
-                    return;
-                lastRefresh = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
+
+        [ObservableProperty]
+        double? dividendForecast;
+
+        /*
+        [ObservableProperty]
+        Dictionary <int, double> dividendHistory;
+        */
+
+        [ObservableProperty]
+        DateTime? dateOfAGM;
+
+        [ObservableProperty]
+        string currency;
 
         double? currentRate;
         public double? CurrentRate
@@ -195,19 +107,8 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
+        [ObservableProperty]
         double quantity = 0;
-        public double Quantity
-        {
-            get => quantity;
-            set
-            {
-                if (quantity == value)
-                    return;
-                quantity = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
 
         double entrancePrice = 0;
         public double EntrancePrice
@@ -239,7 +140,9 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
+        [ObservableProperty]
         double totalDividends = 0;
+        /*
         public double TotalDividends
         {
             get => totalDividends;
@@ -252,8 +155,11 @@ namespace AndreasReitberger.Stocks.Models
                 NotifyListeners();
             }
         }
+        */
 
+        [ObservableProperty]
         double growth = 0;
+        /*
         public double Growth
         {
             get => growth;
@@ -266,8 +172,11 @@ namespace AndreasReitberger.Stocks.Models
                 NotifyListeners();
             }
         }
+        */
 
+        [ObservableProperty]
         double growthPercentage = 0;
+        /*
         public double GrowthPercentage
         {
             get => growthPercentage;
@@ -280,6 +189,7 @@ namespace AndreasReitberger.Stocks.Models
                 NotifyListeners();
             }
         }
+        */
 
         double currentWorth = 0;
         public double CurrentWorth
@@ -296,7 +206,9 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
+        [ObservableProperty]
         double volume = 0;
+        /*
         public double Volume
         {
             get => currentWorth;
@@ -309,6 +221,7 @@ namespace AndreasReitberger.Stocks.Models
                 NotifyListeners();
             }
         }
+        */
 
         double? priceOpen = 0;
 #if SQLite
