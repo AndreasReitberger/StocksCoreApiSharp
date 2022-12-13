@@ -17,7 +17,6 @@ namespace AndreasReitberger.Stocks.Models
     [ObservableObject]
     public partial class Stock// : BaseModel
     {
-
         #region Properties
         [ObservableProperty]
 #if SQLite
@@ -78,216 +77,99 @@ namespace AndreasReitberger.Stocks.Models
         [ObservableProperty]
         string currency;
 
+        [ObservableProperty]
         double? currentRate;
-        public double? CurrentRate
+        partial void OnCurrentRateChanged(double? value)
         {
-            get => currentRate;
-            set
-            {
-                if (currentRate == value)
-                    return;
-                currentRate = value;
-                OnPropertyChanged();
-                NotifyListeners();
-                UpdateChangedIndicator();
-            }
+            NotifyListeners();
+            UpdateChangedIndicator();
         }
 
+        [ObservableProperty]
         bool respectDividendsForEntrancePrice = true;
-        public bool RespectDividendsForEntrancePrice
+        partial void OnRespectDividendsForEntrancePriceChanged(bool value)
         {
-            get => respectDividendsForEntrancePrice;
-            set
-            {
-                if (respectDividendsForEntrancePrice == value)
-                    return;
-                respectDividendsForEntrancePrice = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
+            NotifyListeners();
         }
 
         [ObservableProperty]
         double quantity = 0;
 
+        [ObservableProperty]
         double entrancePrice = 0;
-        public double EntrancePrice
+        partial void OnEntrancePriceChanged(double value)
         {
-            get => entrancePrice;
-            set
-            {
-                if (entrancePrice == value)
-                    return;
-                entrancePrice = value;
-                OnPropertyChanged();
-                NotifyListeners();
-                UpdateChangedIndicator();
-            }
+            NotifyListeners();
+            UpdateChangedIndicator();
         }
 
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(PositiveGrowth))]
         double totalCosts = 0;
-        public double TotalCosts
+        partial void OnTotalCostsChanged(double value)
         {
-            get => totalCosts;
-            set
-            {
-                if (totalCosts == value)
-                    return;
-                totalCosts = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(PositiveGrowth));
-                NotifyListeners();
-            }
+            NotifyListeners();
         }
 
         [ObservableProperty]
         double totalDividends = 0;
-        /*
-        public double TotalDividends
-        {
-            get => totalDividends;
-            set
-            {
-                if (totalDividends == value)
-                    return;
-                totalDividends = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
-        */
 
         [ObservableProperty]
         double growth = 0;
-        /*
-        public double Growth
-        {
-            get => growth;
-            set
-            {
-                if (growth == value)
-                    return;
-                growth = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
-        */
 
         [ObservableProperty]
         double growthPercentage = 0;
-        /*
-        public double GrowthPercentage
-        {
-            get => growthPercentage;
-            set
-            {
-                if (growthPercentage == value)
-                    return;
-                growthPercentage = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
-        */
 
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(PositiveGrowth))]
         double currentWorth = 0;
-        public double CurrentWorth
+
+        partial void OnCurrentWorthChanged(double value)
         {
-            get => currentWorth;
-            set
-            {
-                if (currentWorth == value)
-                    return;
-                currentWorth = value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(PositiveGrowth));
-                NotifyListeners();
-            }
+            NotifyListeners();
         }
 
         [ObservableProperty]
         double volume = 0;
-        /*
-        public double Volume
-        {
-            get => currentWorth;
-            set
-            {
-                if (volume == value)
-                    return;
-                volume = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
-        */
 
+        [ObservableProperty]
+#if SQLite
+        [property: Ignore]
+#endif
         double? priceOpen = 0;
-#if SQLite
-        [Ignore]
-#endif
-        public double? PriceOpen
+        partial void OnPriceOpenChanged(double? value)
         {
-            get => priceOpen;
-            private set
-            {
-                if (priceOpen == value)
-                    return;
-                priceOpen = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
+            NotifyListeners();
         }
 
+        [ObservableProperty]
+#if SQLite
+        [property: Ignore]
+#endif
         double? priceClose = 0;
-#if SQLite
-        [Ignore]
-#endif
-        public double? PriceClose
+        partial void OnPriceCloseChanged(double? value)
         {
-            get => priceClose;
-            private set
-            {
-                if (priceClose == value)
-                    return;
-                priceClose = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
+            NotifyListeners();
         }
 
+        [ObservableProperty]
+#if SQLite
+        [property: Ignore]
+#endif
         double? change = 0;
-#if SQLite
-        [Ignore]
-#endif
-        public double? Change
+        partial void OnChangeChanged(double? value)
         {
-            get => change;
-            private set
-            {
-                if (change == value)
-                    return;
-                change = value;
-                OnPropertyChanged();
-            }
+            NotifyListeners();
         }
 
-        ValueChangedIndicator changedIndicator = ValueChangedIndicator.Unchanged;
+        [ObservableProperty]
 #if SQLite
-        [Ignore]
+        [property: Ignore]
 #endif
-        public ValueChangedIndicator ChangedIndicator
+        ValueChangedIndicator changedIndicator = ValueChangedIndicator.Unchanged;
+        partial void OnChangedIndicatorChanged(ValueChangedIndicator value)
         {
-            get => changedIndicator;
-            private set
-            {
-                if (changedIndicator == value)
-                    return;
-                changedIndicator = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
+            NotifyListeners();
         }
 
 #if SQLite
@@ -439,7 +321,7 @@ namespace AndreasReitberger.Stocks.Models
 
         void UpdateOpenClosePrices()
         {
-            var priceRange = PriceRanges?.LastOrDefault();
+            StockPriceRange? priceRange = PriceRanges?.LastOrDefault();
             PriceClose = priceRange?.Close ?? CurrentRate;
             PriceOpen = priceRange?.Open ?? CurrentRate;
             // Change since the laste open

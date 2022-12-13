@@ -44,22 +44,7 @@ namespace AndreasReitberger.Stocks.Models
         [property: ManyToMany(typeof(StockMarketplaceRelation))]
 #endif
         ObservableCollection<Stock> stocks = new();
-        /*
-#if SQLite
-        [ManyToMany(typeof(StockMarketplaceRelation))]
-#endif
-        public ObservableCollection<Stock> Stocks
-        {
-            get => stocks;
-            set
-            {
-                if (stocks == value)
-                    return;
-                stocks = value;
-                OnPropertyChanged();
-            }
-        }
-        */
+
         #endregion
 
         #region Constructor

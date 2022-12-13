@@ -1,6 +1,7 @@
 ﻿using AndreasReitberger.Core.Utilities;
 using AndreasReitberger.Stocks.Models.Database;
 using AndreasReitberger.Stocks.Models.Events;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 #if SQLite
 using SQLite;
@@ -13,101 +14,58 @@ namespace AndreasReitberger.Stocks.Models
 #if SQLite
     [Table(nameof(WatchList) + "s")]
 #endif
-    public partial class WatchList : BaseModel
+    [ObservableObject]
+    public partial class WatchList
     {
         #region Properties
 
-        Guid id = Guid.Empty;
+        [ObservableProperty]
 #if SQLite
-        [PrimaryKey]
+        [property: PrimaryKey]
 #endif
-        public Guid Id
+        Guid id = Guid.Empty;
+        partial void OnIdChanged(Guid value)
         {
-            get => id;
-            set
-            {
-                if (id == value)
-                    return;
-                id = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
+            NotifyListeners();
         }
 
+        [ObservableProperty]
         string name = "";
-        public string Name
+        partial void OnNameChanged(string value)
         {
-            get => name;
-            set
-            {
-                if (name == value)
-                    return;
-                name = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
+            NotifyListeners();
         }
 
+        [ObservableProperty]
         bool isPrimaryWatchList = false;
-        public bool IsPrimaryWatchList
+        partial void OnIsPrimaryWatchListChanged(bool value)
         {
-            get => isPrimaryWatchList;
-            set
-            {
-                if (isPrimaryWatchList == value)
-                    return;
-                isPrimaryWatchList = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
+            NotifyListeners();
         }
 
+        [ObservableProperty]
         DateTime? lastRefresh;
-        public DateTime? LastRefresh
+        partial void OnLastRefreshChanged(DateTime? value)
         {
-            get => lastRefresh;
-            set
-            {
-                if (lastRefresh == value)
-                    return;
-                lastRefresh = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
+            NotifyListeners();
         }
 
+        [ObservableProperty]
         DateTime? dateOfCreation = null;
-        public DateTime? DateOfCreation
+        partial void OnDateOfCreationChanged(DateTime? value)
         {
-            get => dateOfCreation;
-            set
-            {
-                if (dateOfCreation == value)
-                    return;
-                dateOfCreation = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
+            NotifyListeners();
         }
 
         #endregion
 
         #region Collections
-        ObservableCollection<Stock> stocks = new();
+        [ObservableProperty]
 #if SQLite
-        [ManyToMany(typeof(StockWatchListRelation))]
+        [property: ManyToMany(typeof(StockWatchListRelation))]
 #endif
-        public ObservableCollection<Stock> Stocks
-        {
-            get => stocks;
-            set
-            {
-                if (stocks == value)
-                    return;
-                stocks = value;
-                OnPropertyChanged();
-            }
-        }
+        ObservableCollection<Stock> stocks = new();
+
         #endregion
 
         #region Constructor

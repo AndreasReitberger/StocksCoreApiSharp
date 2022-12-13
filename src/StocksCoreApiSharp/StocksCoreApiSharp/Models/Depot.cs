@@ -1,11 +1,7 @@
-﻿using AndreasReitberger.Core.Utilities;
-using AndreasReitberger.Stocks.Models.Database;
-using AndreasReitberger.Stocks.Models.Events;
+﻿using AndreasReitberger.Stocks.Models.Events;
 using Newtonsoft.Json;
-using System.Linq;
-using System;
-using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
+using AndreasReitberger.Stocks.Models.Database;
 #if SQLite
 using SQLite;
 using SQLiteNetExtensions.Attributes;
@@ -34,19 +30,13 @@ namespace AndreasReitberger.Stocks.Models
         [ObservableProperty]
         bool isPrimaryDepot = false;
 
+        [ObservableProperty]
         bool considerDividendsForGrowthCalculation = true;
-        public bool ConsiderDividendsForGrowthCalculation
+        partial void OnConsiderDividendsForGrowthCalculationChanged(bool value)
         {
-            get => considerDividendsForGrowthCalculation;
-            set
-            {
-                if (considerDividendsForGrowthCalculation == value)
-                    return;
-                considerDividendsForGrowthCalculation = value;
-                OnPropertyChanged();
-                UpdateStocks();
-                NotifyListeners();
-            }
+            // Do stuff (including calling other methods if needed)
+            UpdateStocks();
+            NotifyListeners();
         }
 
         [ObservableProperty]
@@ -55,71 +45,36 @@ namespace AndreasReitberger.Stocks.Models
         [ObservableProperty]
         DateTime? dateOfCreation = null;
 
+        [ObservableProperty]
         double totalWorth = 0;
-        public double TotalWorth
+        partial void OnTotalWorthChanged(double value)
         {
-            get => totalWorth;
-            set
-            {
-                if (totalWorth == value)
-                    return;
-                totalWorth = value;
-                OnPropertyChanged();
-                CostGrowthRatio = TotalWorth / (TotalCosts / 100);
-                NotifyListeners();
-                //UpdateDependencies();
-            }
+            // Do stuff (including calling other methods if needed)
+            CostGrowthRatio = TotalWorth / (TotalCosts / 100);
+            NotifyListeners();
         }
 
+        [ObservableProperty]
         double totalCosts = 0;
-        public double TotalCosts
+        partial void OnTotalCostsChanged(double value)
         {
-            get => totalCosts;
-            set
-            {
-                if (totalCosts == value)
-                    return;
-                totalCosts = value;
-                OnPropertyChanged();
-                CostGrowthRatio = TotalWorth / (TotalCosts / 100);
-                NotifyListeners();
-                //UpdateDependencies();
-            }
+            // Do stuff (including calling other methods if needed)
+            CostGrowthRatio = TotalWorth / (TotalCosts / 100);
+            NotifyListeners();
         }
 
+        [ObservableProperty]
         double costGrowthRatio = 0;
-        public double CostGrowthRatio
+        partial void OnCostGrowthRatioChanged(double value)
         {
-            get => costGrowthRatio;
-            set
-            {
-                if (costGrowthRatio == value)
-                    return;
-                costGrowthRatio = value;
-                OnPropertyChanged();
-                Growth = TotalWorth - TotalCosts;
-                NotifyListeners();
-                //UpdateDependencies();
-            }
+            // Do stuff (including calling other methods if needed)
+            Growth = TotalWorth - TotalCosts;
+            NotifyListeners();
         }
 
         [ObservableProperty]
         double growth = 0;
-        /*
-        public double Growth
-        {
-            get => growth;
-            set
-            {
-                if (growth == value)
-                    return;
-                growth = value;
-                OnPropertyChanged();
-                NotifyListeners();
-                //UpdateDependencies();
-            }
-        }
-        */
+
 #if SQLite
         [Ignore]
 #endif
@@ -135,21 +90,11 @@ namespace AndreasReitberger.Stocks.Models
         #endregion
 
         #region Collections
-        ObservableCollection<Stock> stocks = new();
+        [ObservableProperty]
 #if SQLite
-        [ManyToMany(typeof(StockDepotRelation))]
-#endif
-        public ObservableCollection<Stock> Stocks
-        {
-            get => stocks;
-            set
-            {
-                if (stocks == value)
-                    return;
-                stocks = value;
-                OnPropertyChanged();
-            }
-        }
+        [property: ManyToMany(typeof(StockDepotRelation))]
+#endif      
+        ObservableCollection<Stock> stocks = new();
         #endregion
 
         #region Constructor
