@@ -1,20 +1,21 @@
 ﻿#if SQLite
 using CommunityToolkit.Mvvm.ComponentModel;
 using SQLite;
+using SQLiteNetExtensions.Attributes;
 
 namespace AndreasReitberger.Stocks.Models.Database
 {
-    [Table(nameof(StockWatchListRelation) + "s")]
+    [Table(nameof(StockMarketplaceRelation) + "s")]
     [ObservableObject]
-    public partial class StockWatchListRelation
+    public partial class StockMarketplaceRelation
     {
         [ObservableProperty]
         [property: ForeignKey(typeof(Stock))]
         Guid stockId;
 
         [ObservableProperty]
-        [property: ForeignKey(typeof(WatchList))]
-        Guid watchListId;
+        [property: ForeignKey(typeof(Marketplace))]
+        Guid marketplacetId;
     }
 }
 #endif

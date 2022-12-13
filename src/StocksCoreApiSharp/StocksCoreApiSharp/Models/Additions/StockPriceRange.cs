@@ -1,5 +1,6 @@
 ﻿
 using AndreasReitberger.Core.Utilities;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 #if SQLite
 using SQLite;
@@ -11,47 +12,39 @@ namespace AndreasReitberger.Stocks.Models.Additions
 #if SQLite
     [Table(nameof(StockPriceRange) + "s")]
 #endif
-    public partial class StockPriceRange : BaseModel
+    [ObservableObject]
+    public partial class StockPriceRange
     {
         #region Properties
+        [ObservableProperty]
+#if SQLite
+        [property: PrimaryKey]
+#endif
         Guid id = Guid.Empty;
-#if SQLite
-        [PrimaryKey]
-#endif
-        public Guid Id
-        {
-            get => id;
-            set
-            {
-                if (id == value)
-                    return;
-                id = value;
-                OnPropertyChanged();
-            }
-        }
 
+        [ObservableProperty]
+#if SQLite
+        [property: ForeignKey(typeof(Depot))]
+#endif
         Guid stockId = Guid.Empty;
-#if SQLite
-        [ForeignKey(typeof(Depot))]
-#endif
-        public Guid StockId
-        {
-            get => stockId;
-            set
-            {
-                if (stockId == value)
-                    return;
-                stockId = value;
-                OnPropertyChanged();
-            }
-        }
 
-        public DateTime Date { get; set; }
-        public double Open { get; set; }
-        public double Close { get; set; }
-        public double High { get; set; }
-        public double Low { get; set; }
-        public double Volume { get; set; }
+        [ObservableProperty]
+        DateTime date;
+
+        [ObservableProperty]
+        double open;
+
+        [ObservableProperty]
+        double close;
+
+        [ObservableProperty]
+        double high;
+
+        [ObservableProperty]
+        double low;
+
+        [ObservableProperty]
+        double volume;
         #endregion
 
         #region Constructor

@@ -153,6 +153,23 @@ namespace AndreasReitberger.Stocks.Utilities
             }
         }
 
+        List<Marketplace> _marketplaces = new();
+        public List<Marketplace> Marketplaces
+        {
+            get => _marketplaces;
+            private set
+            {
+                if (_marketplaces == value) return;
+                //if (_calculations?.SequenceEqual(value) ?? false) return;
+                _marketplaces = value;
+                OnPropertyChanged();
+                OnMarketplacesChanged(new MarketplacesChangedDatabaseEventArgs()
+                {
+                    Marketplaces = value,
+                });
+            }
+        }
+
         List<Stock> _stocks = new();
         public List<Stock> Stocks
         {
@@ -237,6 +254,8 @@ namespace AndreasReitberger.Stocks.Utilities
             Database?.CreateTable<StockDepotRelation>();
             Database?.CreateTable<StockWatchListRelation>();
             Database?.CreateTable<StockDividendAppointment>();
+            Database?.CreateTable<Marketplace>();
+            Database?.CreateTable<StockMarketplaceRelation>();
             Database?.CreateTable<Dividend>();
             Database?.CreateTable<Transaction>();
 
@@ -252,6 +271,8 @@ namespace AndreasReitberger.Stocks.Utilities
             await DatabaseAsync.CreateTableAsync<StockDepotRelation>();
             await DatabaseAsync.CreateTableAsync<StockWatchListRelation>();
             await DatabaseAsync.CreateTableAsync<StockDividendAppointment>();
+            await DatabaseAsync.CreateTableAsync<Marketplace>();
+            await DatabaseAsync.CreateTableAsync<StockMarketplaceRelation>();
             await DatabaseAsync.CreateTableAsync<Dividend>();
             await DatabaseAsync.CreateTableAsync<Transaction>();
 

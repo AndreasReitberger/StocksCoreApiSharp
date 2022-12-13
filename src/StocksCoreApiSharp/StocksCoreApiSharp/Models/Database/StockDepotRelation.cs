@@ -1,19 +1,21 @@
 ﻿#if SQLite
+using CommunityToolkit.Mvvm.ComponentModel;
 using SQLite;
 using SQLiteNetExtensions.Attributes;
-using System;
 
 namespace AndreasReitberger.Stocks.Models.Database
 {
     [Table("StockDepot")]
+    [ObservableObject]
     public partial class StockDepotRelation
     {
-        
-        [ForeignKey(typeof(Stock))]
-        public Guid StockId { get; set; }
+        [ObservableProperty]
+        [property: ForeignKey(typeof(Stock))]
+        Guid stockId;
 
-        [ForeignKey(typeof(Depot))]
-        public Guid DepotId { get; set; }
+        [ObservableProperty]
+        [property: ForeignKey(typeof(Depot))]
+        Guid depotId;
     }
 }
 #endif

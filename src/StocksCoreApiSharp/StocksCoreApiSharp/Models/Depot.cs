@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System;
 using System.IO;
+using CommunityToolkit.Mvvm.ComponentModel;
 #if SQLite
 using SQLite;
 using SQLiteNetExtensions.Attributes;
@@ -16,56 +17,22 @@ namespace AndreasReitberger.Stocks.Models
 #if SQLite
     [Table(nameof(Depot) + "s")]
 #endif
-    public partial class Depot : BaseModel
+    [ObservableObject]
+    public partial class Depot
     {
         #region Properties
 
-        //[JsonProperty(nameof(Id))]
-        Guid id = Guid.Empty;
+        [ObservableProperty]
 #if SQLite
-        [PrimaryKey]
+        [property: PrimaryKey]
 #endif
-        //[JsonIgnore]
-        public Guid Id
-        {
-            get => id;
-            set
-            {
-                if (id == value)
-                    return;
-                id = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
+        Guid id = Guid.Empty;
 
+        [ObservableProperty]
         string name = "";
-        public string Name
-        {
-            get => name;
-            set
-            {
-                if (name == value)
-                    return;
-                name = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
 
+        [ObservableProperty]
         bool isPrimaryDepot = false;
-        public bool IsPrimaryDepot
-        {
-            get => isPrimaryDepot;
-            set
-            {
-                if (isPrimaryDepot == value)
-                    return;
-                isPrimaryDepot = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
 
         bool considerDividendsForGrowthCalculation = true;
         public bool ConsiderDividendsForGrowthCalculation
@@ -82,33 +49,11 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
+        [ObservableProperty]
         DateTime? lastRefresh;
-        public DateTime? LastRefresh
-        {
-            get => lastRefresh;
-            set
-            {
-                if (lastRefresh == value)
-                    return;
-                lastRefresh = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
 
+        [ObservableProperty]
         DateTime? dateOfCreation = null;
-        public DateTime? DateOfCreation
-        {
-            get => dateOfCreation;
-            set
-            {
-                if (dateOfCreation == value)
-                    return;
-                dateOfCreation = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
 
         double totalWorth = 0;
         public double TotalWorth
@@ -158,7 +103,9 @@ namespace AndreasReitberger.Stocks.Models
             }
         }
 
+        [ObservableProperty]
         double growth = 0;
+        /*
         public double Growth
         {
             get => growth;
@@ -172,7 +119,7 @@ namespace AndreasReitberger.Stocks.Models
                 //UpdateDependencies();
             }
         }
-
+        */
 #if SQLite
         [Ignore]
 #endif

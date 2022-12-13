@@ -5,39 +5,68 @@ using SQLiteNetExtensions.Attributes;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace AndreasReitberger.Stocks.Models.Additions
 {
 #if SQLite
     [Table(nameof(StockDividendAppointment) + "s")]
 #endif
+    [ObservableObject]
     public partial class StockDividendAppointment
     {
         #region  Properties
+        [ObservableProperty]
 #if SQLite
-        [PrimaryKey]
+        [property: PrimaryKey]
 #endif
-        public Guid Id { get; set; }
+        Guid id;
+
+        [ObservableProperty]
 #if SQLite
-        [ForeignKey(typeof(Stock))]
+        [property: ForeignKey(typeof(Stock))]
 #endif
-        public Guid StockId { get; set; }
-        public string? Name { get; set; }
-        public DateTime From { get; set; }
-        public DateTime To { get; set; }
-        public bool IsAllDay { get; set; }
-        public string? Notes { get; set; }
-        [Ignore]
-        public TimeZoneInfo? StartTimeZone { get; set; }
-        [Ignore]
-        public TimeZoneInfo? EndTimeZone { get; set; }
-        [Ignore]
-        public Color Background { get; set; }
-        public string? BackgroundColorCode { get; set; }
-        public Guid? RecurrenceId { get; set; }
-        public string? RecurrenceRule { get; set; }
-        [OneToMany]
-        public ObservableCollection<DateTime>? RecurrenceExceptions { get; set; } = new();
+        Guid stockId;
+
+        [ObservableProperty]
+        string? name;
+
+        [ObservableProperty]
+        DateTime from;
+
+        [ObservableProperty]
+        DateTime to;
+
+        [ObservableProperty]
+        bool isAllDay;
+
+        [ObservableProperty]
+        string? notes;
+
+        [ObservableProperty]
+        [property: Ignore]
+        TimeZoneInfo? startTimeZone;
+
+        [ObservableProperty]
+        [property: Ignore]
+        TimeZoneInfo? endTimeZone;
+
+        [ObservableProperty]
+        [property: Ignore]
+        Color background;
+
+        [ObservableProperty]
+        string? backgroundColorCode;
+
+        [ObservableProperty]
+        Guid? recurrenceId;
+
+        [ObservableProperty]
+        string? recurrenceRule;
+
+        [ObservableProperty]
+        [property: OneToMany]
+        ObservableCollection<DateTime>? recurrenceExceptions = new();
 
         #endregion
 

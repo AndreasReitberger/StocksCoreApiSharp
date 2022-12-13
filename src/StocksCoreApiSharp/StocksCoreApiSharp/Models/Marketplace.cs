@@ -1,7 +1,7 @@
-﻿using AndreasReitberger.Core.Utilities;
-using AndreasReitberger.Stocks.Models.Database;
+﻿using AndreasReitberger.Stocks.Models.Database;
 using AndreasReitberger.Stocks.Models.Events;
 using Newtonsoft.Json;
+using CommunityToolkit.Mvvm.ComponentModel;
 #if SQLite
 using SQLite;
 using SQLiteNetExtensions.Attributes;
@@ -11,91 +11,42 @@ using System.Collections.ObjectModel;
 namespace AndreasReitberger.Stocks.Models
 {
 #if SQLite
-    [Table(nameof(WatchList) + "s")]
+    [Table(nameof(Marketplace) + "s")]
 #endif
-    public partial class WatchList : BaseModel
+    [ObservableObject]
+    public partial class Marketplace
     {
         #region Properties
 
-        Guid id = Guid.Empty;
+        [ObservableProperty]
 #if SQLite
-        [PrimaryKey]
+        [property: PrimaryKey]
 #endif
-        public Guid Id
-        {
-            get => id;
-            set
-            {
-                if (id == value)
-                    return;
-                id = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
+        Guid id = Guid.Empty;
 
+        [ObservableProperty]
         string name = "";
-        public string Name
-        {
-            get => name;
-            set
-            {
-                if (name == value)
-                    return;
-                name = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
 
-        bool isPrimaryWatchList = false;
-        public bool IsPrimaryWatchList
-        {
-            get => isPrimaryWatchList;
-            set
-            {
-                if (isPrimaryWatchList == value)
-                    return;
-                isPrimaryWatchList = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
+        [ObservableProperty]
+        bool isOpen = false;
 
+        [ObservableProperty]
         DateTime? lastRefresh;
-        public DateTime? LastRefresh
-        {
-            get => lastRefresh;
-            set
-            {
-                if (lastRefresh == value)
-                    return;
-                lastRefresh = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
 
+        [ObservableProperty]
         DateTime? dateOfCreation = null;
-        public DateTime? DateOfCreation
-        {
-            get => dateOfCreation;
-            set
-            {
-                if (dateOfCreation == value)
-                    return;
-                dateOfCreation = value;
-                OnPropertyChanged();
-                NotifyListeners();
-            }
-        }
 
         #endregion
 
         #region Collections
-        ObservableCollection<Stock> stocks = new();
+        [ObservableProperty]
 #if SQLite
-        [ManyToMany(typeof(StockWatchListRelation))]
+        [property: ManyToMany(typeof(StockMarketplaceRelation))]
+#endif
+        ObservableCollection<Stock> stocks = new();
+        /*
+#if SQLite
+        [ManyToMany(typeof(StockMarketplaceRelation))]
 #endif
         public ObservableCollection<Stock> Stocks
         {
@@ -108,29 +59,30 @@ namespace AndreasReitberger.Stocks.Models
                 OnPropertyChanged();
             }
         }
+        */
         #endregion
 
         #region Constructor
-        public WatchList()
+        public Marketplace()
         {
             Id = Guid.NewGuid();
             Stocks.CollectionChanged += Stocks_CollectionChanged;
         }
 
-        public WatchList(string name)
+        public Marketplace(string name)
         {
             Id = Guid.NewGuid();
             Name = name;
             Stocks.CollectionChanged += Stocks_CollectionChanged;
         }
 
-        public WatchList(Guid id)
+        public Marketplace(Guid id)
         {
             Id = id;
             Stocks.CollectionChanged += Stocks_CollectionChanged;
         }
 
-        public WatchList(Guid id, string name)
+        public Marketplace(Guid id, string name)
         {
             Id = id;
             Name = name;
@@ -139,7 +91,7 @@ namespace AndreasReitberger.Stocks.Models
         #endregion
 
         #region Destructor
-        ~WatchList()
+        ~Marketplace()
         {
             Stocks.CollectionChanged -= Stocks_CollectionChanged;
         }
@@ -160,10 +112,10 @@ namespace AndreasReitberger.Stocks.Models
             Error?.Invoke(this, e);
         }
 
-        public event EventHandler<WatchListChangedEventArgs> WatchListChanged;
-        protected virtual void OnWatchListChanged(WatchListChangedEventArgs e)
+        public event EventHandler<MarketplaceChangedEventArgs> MarketplaceChanged;
+        protected virtual void OnMarketplaceChanged(MarketplaceChangedEventArgs e)
         {
-            WatchListChanged?.Invoke(this, e);
+            MarketplaceChanged?.Invoke(this, e);
         }
         #endregion
 
@@ -178,7 +130,7 @@ namespace AndreasReitberger.Stocks.Models
         #region Methods
         void NotifyListeners()
         {
-            OnWatchListChanged(new()
+            OnMarketplaceChanged(new()
             {
                 Id = Id,
                 Name = Name,
@@ -204,6 +156,7 @@ namespace AndreasReitberger.Stocks.Models
             }
             UpdateDependencies();
         }
+
         #endregion
 
         #region Overrides
