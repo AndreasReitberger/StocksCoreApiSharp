@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\StocksCoreApiSharp\StocksCoreApiSharp.csproj" />
+    <ProjectReference Include="..\StocksCoreApiSharp.SQLite\StocksCoreApiSharp.SQLite.csproj" />
   </ItemGroup>
 
 </Project>

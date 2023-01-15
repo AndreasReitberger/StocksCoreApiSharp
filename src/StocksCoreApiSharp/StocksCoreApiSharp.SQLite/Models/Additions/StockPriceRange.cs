@@ -1,42 +1,53 @@
-﻿using AndreasReitberger.Core.Utilities;
-using AndreasReitberger.Stocks.Enums;
+﻿using AndreasReitberger.Stocks.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
-using System;
+using SQLite;
+using SQLiteNetExtensions.Attributes;
 
-namespace AndreasReitberger.Stocks.Models
+namespace AndreasReitberger.Stocks.SQLite.Additions
 {
-    public partial class Transaction : ObservableObject
+
+    [Table(nameof(StockPriceRange) + "s")]
+    public partial class StockPriceRange : ObservableObject, IStockPriceRange
     {
         #region Properties
-
         [ObservableProperty]
+
+        [property: PrimaryKey]
+
         Guid id = Guid.Empty;
 
         [ObservableProperty]
-        Guid stockId;
+
+        [property: ForeignKey(typeof(Depot))]
+
+        Guid stockId = Guid.Empty;
 
         [ObservableProperty]
-        TransactionType? type = null;
+        DateTime date;
 
         [ObservableProperty]
-        DateTime? dateOfCreation = null;
+        double open;
 
         [ObservableProperty]
-        double amount = 0;
+        double close;
 
         [ObservableProperty]
-        double price = 0;
+        double high;
 
-        public double Total => Math.Round(Amount * Price, 2);
+        [ObservableProperty]
+        double low;
+
+        [ObservableProperty]
+        double volume;
         #endregion
 
         #region Constructor
-        public Transaction()
+        public StockPriceRange()
         {
             Id = Guid.NewGuid();
         }
-        public Transaction(Guid id)
+        public StockPriceRange(Guid id)
         {
             Id = id;
         }

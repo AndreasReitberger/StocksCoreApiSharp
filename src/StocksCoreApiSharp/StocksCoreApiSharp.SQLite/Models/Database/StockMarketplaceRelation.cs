@@ -1,13 +1,12 @@
-﻿#if SQLite
+﻿using AndreasReitberger.Stocks.SQLite.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SQLite;
 using SQLiteNetExtensions.Attributes;
 
-namespace AndreasReitberger.Stocks.Models.Database
+namespace AndreasReitberger.Stocks.SQLite.Database
 {
     [Table(nameof(StockMarketplaceRelation) + "s")]
-    [ObservableObject]
-    public partial class StockMarketplaceRelation
+    public partial class StockMarketplaceRelation : ObservableObject, IStockMarketplaceRelation
     {
         [ObservableProperty]
         [property: ForeignKey(typeof(Stock))]
@@ -15,7 +14,6 @@ namespace AndreasReitberger.Stocks.Models.Database
 
         [ObservableProperty]
         [property: ForeignKey(typeof(Marketplace))]
-        Guid marketplacetId;
+        Guid marketplaceId;
     }
 }
-#endif

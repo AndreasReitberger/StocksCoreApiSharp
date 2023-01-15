@@ -1,17 +1,22 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AndreasReitberger.Stocks.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
+using SQLite;
+using SQLiteNetExtensions.Attributes;
 
-namespace AndreasReitberger.Stocks.Models
+namespace AndreasReitberger.Stocks.SQLite
 {
 
-    [ObservableObject]
-    public partial class Dividend// : BaseModel
+    [Table(nameof(Dividend) + "s")]
+    public partial class Dividend : ObservableObject, IDividend
     {
         #region Properties
         [ObservableProperty]
+        [property: PrimaryKey]
         Guid id = Guid.Empty;
 
         [ObservableProperty]
+        [property: ForeignKey(typeof(Stock))]
         Guid stockId;
 
         [ObservableProperty]

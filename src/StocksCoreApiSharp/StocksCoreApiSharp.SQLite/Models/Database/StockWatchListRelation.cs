@@ -1,12 +1,12 @@
-﻿#if SQLite
+﻿using AndreasReitberger.Stocks.SQLite.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SQLite;
+using SQLiteNetExtensions.Attributes;
 
-namespace AndreasReitberger.Stocks.Models.Database
+namespace AndreasReitberger.Stocks.SQLite.Database
 {
     [Table(nameof(StockWatchListRelation) + "s")]
-    [ObservableObject]
-    public partial class StockWatchListRelation
+    public partial class StockWatchListRelation : ObservableObject, IStockWatchListRelation
     {
         [ObservableProperty]
         [property: ForeignKey(typeof(Stock))]
@@ -17,4 +17,3 @@ namespace AndreasReitberger.Stocks.Models.Database
         Guid watchListId;
     }
 }
-#endif

@@ -1,12 +1,8 @@
 using AndreasReitberger.Stocks.Enums;
-using AndreasReitberger.Stocks.Models;
-using AndreasReitberger.Stocks.Utilities;
+using AndreasReitberger.Stocks.SQLite;
+using AndreasReitberger.Stocks.SQLite.Additions;
+using AndreasReitberger.Stocks.SQLite.Utilities;
 using Newtonsoft.Json;
-using NUnit.Framework;
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace StocksCoreApiSharp.Test
 {
@@ -33,7 +29,7 @@ namespace StocksCoreApiSharp.Test
                     ISIN = "DE000BASF111",
                     CurrentRate = 41.05,
                 };
-                basf.Transactions.Add(new()
+                basf.Transactions.Add(new Transaction()
                 {
                     StockId = basf.Id,
                     DateOfCreation = DateTime.Now,
@@ -41,7 +37,7 @@ namespace StocksCoreApiSharp.Test
                     Price = 64.10,
                     Type = TransactionType.Buy,
                 });
-                basf.Transactions.Add(new()
+                basf.Transactions.Add(new Transaction()
                 {
                     StockId = basf.Id,
                     DateOfCreation = DateTime.Now,
@@ -49,7 +45,7 @@ namespace StocksCoreApiSharp.Test
                     Price = 60.10,
                     Type = TransactionType.Sell,
                 });
-                basf.Dividends.Add(new()
+                basf.Dividends.Add(new Dividend()
                 {
                     StockId = basf.Id,
                     DateOfDividend = DateTime.Now,
@@ -57,7 +53,7 @@ namespace StocksCoreApiSharp.Test
                     Quantity = 100,
                     Tax = 300,
                 });
-                basf.Dividends.Add(new()
+                basf.Dividends.Add(new Dividend()
                 {
                     StockId = basf.Id,
                     DateOfDividend = DateTime.Now.AddYears(-1),
@@ -80,7 +76,7 @@ namespace StocksCoreApiSharp.Test
                     CurrentRate = 55.60,
                 };
 
-                daimler.Transactions.Add(new()
+                daimler.Transactions.Add(new Transaction()
                 {
                     StockId = daimler.Id,
                     DateOfCreation = DateTime.Now,
@@ -88,7 +84,7 @@ namespace StocksCoreApiSharp.Test
                     Price = 58.10,
                     Type = TransactionType.Buy,
                 });
-                daimler.Transactions.Add(new()
+                daimler.Transactions.Add(new Transaction()
                 {
                     StockId = daimler.Id,
                     DateOfCreation = DateTime.Now,
@@ -96,7 +92,7 @@ namespace StocksCoreApiSharp.Test
                     Price = 38.10,
                     Type = TransactionType.Buy,
                 });
-                daimler.Dividends.Add(new()
+                daimler.Dividends.Add(new Dividend()
                 {
                     StockId = daimler.Id,
                     DateOfDividend = DateTime.Now,
@@ -142,7 +138,7 @@ namespace StocksCoreApiSharp.Test
                         ISIN = "DE000BASF111",
                         CurrentRate = 41.05,
                     };
-                    basf.Transactions.Add(new()
+                    basf.Transactions.Add(new Transaction()
                     {
                         StockId = basf.Id,
                         DateOfCreation = DateTime.Now,
@@ -150,7 +146,7 @@ namespace StocksCoreApiSharp.Test
                         Price = 64.10,
                         Type = TransactionType.Buy,
                     });
-                    basf.Transactions.Add(new()
+                    basf.Transactions.Add(new Transaction()
                     {
                         StockId = basf.Id,
                         DateOfCreation = DateTime.Now,
@@ -158,7 +154,7 @@ namespace StocksCoreApiSharp.Test
                         Price = 60.10,
                         Type = TransactionType.Sell,
                     });
-                    basf.Dividends.Add(new()
+                    basf.Dividends.Add(new Dividend()
                     {
                         StockId = basf.Id,
                         DateOfDividend = DateTime.Now,
@@ -166,7 +162,7 @@ namespace StocksCoreApiSharp.Test
                         Quantity = 100,
                         Tax = 300,
                     });
-                    basf.Dividends.Add(new()
+                    basf.Dividends.Add(new Dividend()
                     {
                         StockId = basf.Id,
                         DateOfDividend = DateTime.Now.AddYears(-1),
@@ -174,7 +170,7 @@ namespace StocksCoreApiSharp.Test
                         Quantity = 100,
                         Tax = 300,
                     });
-                    basf.PriceRanges.Add(new()
+                    basf.PriceRanges.Add(new StockPriceRange()
                     {
                         StockId = basf.Id,
                         Date = DateTime.Now,
@@ -184,7 +180,7 @@ namespace StocksCoreApiSharp.Test
                         High = 53.45,
                         Low = 46.46,
                     });
-                    basf.PriceRanges.Add(new()
+                    basf.PriceRanges.Add(new StockPriceRange()
                     {
                         StockId = basf.Id,
                         Date = DateTime.Now.AddDays(-1),
@@ -209,7 +205,7 @@ namespace StocksCoreApiSharp.Test
                         ISIN = "DE0007100000",
                         CurrentRate = 55.60,
                     };
-                    daimler.Transactions.Add(new()
+                    daimler.Transactions.Add(new Transaction()
                     {
                         StockId = daimler.Id,
                         DateOfCreation = DateTime.Now,
@@ -217,7 +213,7 @@ namespace StocksCoreApiSharp.Test
                         Price = 58.10,
                         Type = TransactionType.Buy,
                     });
-                    daimler.Transactions.Add(new()
+                    daimler.Transactions.Add(new Transaction()
                     {
                         StockId = daimler.Id,
                         DateOfCreation = DateTime.Now,
@@ -225,7 +221,7 @@ namespace StocksCoreApiSharp.Test
                         Price = 38.10,
                         Type = TransactionType.Buy,
                     });
-                    daimler.Dividends.Add(new()
+                    daimler.Dividends.Add(new Dividend()
                     {
                         StockId = daimler.Id,
                         DateOfDividend = DateTime.Now,
@@ -295,7 +291,7 @@ namespace StocksCoreApiSharp.Test
                 ISIN = "DE000BASF111",
                 CurrentRate = 41.05,
             };
-            basf.Transactions.Add(new()
+            basf.Transactions.Add(new Transaction()
             {
                 StockId = basf.Id,
                 DateOfCreation = DateTime.Now,
@@ -304,7 +300,7 @@ namespace StocksCoreApiSharp.Test
                 Type = TransactionType.Buy,
             });
             // Sell with win
-            basf.Transactions.Add(new()
+            basf.Transactions.Add(new Transaction()
             {
                 StockId = basf.Id,
                 DateOfCreation = DateTime.Now,
@@ -332,7 +328,7 @@ namespace StocksCoreApiSharp.Test
                 ISIN = "DE000BASF111",
                 CurrentRate = 41.05,
             };
-            basf.Transactions.Add(new()
+            basf.Transactions.Add(new Transaction()
             {
                 StockId = basf.Id,
                 DateOfCreation = DateTime.Now,
@@ -340,7 +336,7 @@ namespace StocksCoreApiSharp.Test
                 Price = 104.10,
                 Type = TransactionType.Buy,
             });
-            basf.Transactions.Add(new()
+            basf.Transactions.Add(new Transaction()
             {
                 StockId = basf.Id,
                 DateOfCreation = DateTime.Now,
@@ -367,7 +363,7 @@ namespace StocksCoreApiSharp.Test
                 ISIN = "DE000BASF111",
                 CurrentRate = 41.05,
             };
-            basf.Transactions.Add(new()
+            basf.Transactions.Add(new Transaction()
             {
                 StockId = basf.Id,
                 DateOfCreation = DateTime.Now,
@@ -375,7 +371,7 @@ namespace StocksCoreApiSharp.Test
                 Price = 104.10,
                 Type = TransactionType.Buy,
             });
-            basf.Transactions.Add(new()
+            basf.Transactions.Add(new Transaction()
             {
                 StockId = basf.Id,
                 DateOfCreation = DateTime.Now,

@@ -1,27 +1,16 @@
-﻿using AndreasReitberger.Stocks.Models.Database;
-using AndreasReitberger.Stocks.Models.Events;
-using Newtonsoft.Json;
+﻿using AndreasReitberger.Stocks.Models.Events;
 using CommunityToolkit.Mvvm.ComponentModel;
-#if SQLite
-using SQLite;
-using SQLiteNetExtensions.Attributes;
-#endif
+using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.Stocks.Models
 {
-#if SQLite
-    [Table(nameof(Marketplace) + "s")]
-#endif
     [ObservableObject]
     public partial class Marketplace
     {
         #region Properties
 
         [ObservableProperty]
-#if SQLite
-        [property: PrimaryKey]
-#endif
         Guid id = Guid.Empty;
 
         [ObservableProperty]
@@ -40,9 +29,6 @@ namespace AndreasReitberger.Stocks.Models
 
         #region Collections
         [ObservableProperty]
-#if SQLite
-        [property: ManyToMany(typeof(StockMarketplaceRelation))]
-#endif
         ObservableCollection<Stock> stocks = new();
 
         #endregion

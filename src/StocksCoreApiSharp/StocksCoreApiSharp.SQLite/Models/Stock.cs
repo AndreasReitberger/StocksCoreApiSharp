@@ -1,25 +1,33 @@
 ﻿using AndreasReitberger.Stocks.Enums;
-using AndreasReitberger.Stocks.Models.Additions;
+using AndreasReitberger.Stocks.Interfaces;
 using AndreasReitberger.Stocks.Models.Events;
+using AndreasReitberger.Stocks.SQLite.Additions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
+using SQLite;
+using SQLiteNetExtensions.Attributes;
 using System.Collections.ObjectModel;
 
-namespace AndreasReitberger.Stocks.Models
+namespace AndreasReitberger.Stocks.SQLite
 {
-    public partial class Stock : ObservableObject
+    [Table(nameof(Stock) + "s")]
+    public partial class Stock : ObservableObject, IStock
     {
         #region Properties
         [ObservableProperty]
+        [property: PrimaryKey]
         Guid id = Guid.Empty;
 
         [ObservableProperty]
+        [property: ForeignKey(typeof(Depot))]
         Guid depotId = Guid.Empty;
 
         [ObservableProperty]
+        [property: ForeignKey(typeof(WatchList))]
         Guid watchListId = Guid.Empty;
 
         [ObservableProperty]
+        [property: ForeignKey(typeof(Marketplace))]
         Guid marketplaceId = Guid.Empty;
 
         [ObservableProperty]
@@ -45,6 +53,11 @@ namespace AndreasReitberger.Stocks.Models
 
         [ObservableProperty]
         double? dividendForecast;
+
+        /*
+        [ObservableProperty]
+        Dictionary <int, double> dividendHistory;
+        */
 
         [ObservableProperty]
         DateTime? dateOfAGM;
@@ -108,6 +121,7 @@ namespace AndreasReitberger.Stocks.Models
         double volume = 0;
 
         [ObservableProperty]
+        [property: Ignore]
         double? priceOpen = 0;
         partial void OnPriceOpenChanged(double? value)
         {
@@ -115,6 +129,7 @@ namespace AndreasReitberger.Stocks.Models
         }
 
         [ObservableProperty]
+        [property: Ignore]
         double? priceClose = 0;
         partial void OnPriceCloseChanged(double? value)
         {
@@ -122,6 +137,7 @@ namespace AndreasReitberger.Stocks.Models
         }
 
         [ObservableProperty]
+        [property: Ignore]
         double? change = 0;
         partial void OnChangeChanged(double? value)
         {
@@ -129,12 +145,14 @@ namespace AndreasReitberger.Stocks.Models
         }
 
         [ObservableProperty]
+        [property: Ignore]
         ValueChangedIndicator changedIndicator = ValueChangedIndicator.Unchanged;
         partial void OnChangedIndicatorChanged(ValueChangedIndicator value)
         {
             NotifyListeners();
         }
 
+        [Ignore]
         public bool PositiveGrowth
         {
             get
@@ -142,48 +160,28 @@ namespace AndreasReitberger.Stocks.Models
                 return TotalCosts <= CurrentWorth;
             }
         }
+
         #endregion
 
         #region Collections
 
+        [ObservableProperty]
+        [property: OneToMany(CascadeOperations = CascadeOperation.All)]
         ObservableCollection<Transaction> transactions = new();
-        public ObservableCollection<Transaction> Transactions
-        {
-            get => transactions;
-            set
-            {
-                if (transactions == value)
-                    return;
-                transactions = value;
-                OnPropertyChanged();
-            }
-        }
+        //ObservableCollection<ITransaction> transactions = new();
 
+        [ObservableProperty]
+        [property: OneToMany(CascadeOperations = CascadeOperation.All)]
         ObservableCollection<Dividend> dividends = new();
-        public ObservableCollection<Dividend> Dividends
-        {
-            get => dividends;
-            set
-            {
-                if (dividends == value)
-                    return;
-                dividends = value;
-                OnPropertyChanged();
-            }
-        }
+        //ObservableCollection<IDividend> dividends = new();
 
+        [ObservableProperty]
+        [property: OneToMany(CascadeOperations = CascadeOperation.All)]
         ObservableCollection<StockPriceRange> priceRanges = new();
-        public ObservableCollection<StockPriceRange> PriceRanges
+        //ObservableCollection<IStockPriceRange> priceRanges = new();
+        partial void OnPriceRangesChanged(ObservableCollection<StockPriceRange> value)
         {
-            get => priceRanges;
-            set
-            {
-                if (priceRanges == value)
-                    return;
-                priceRanges = value;
-                OnPropertyChanged();
-                UpdateOpenClosePrices();
-            }
+            UpdateOpenClosePrices();
         }
         #endregion
 
@@ -272,7 +270,7 @@ namespace AndreasReitberger.Stocks.Models
 
         void UpdateOpenClosePrices()
         {
-            StockPriceRange? priceRange = PriceRanges?.LastOrDefault();
+            var priceRange = PriceRanges?.LastOrDefault();
             PriceClose = priceRange?.Close ?? CurrentRate;
             PriceOpen = priceRange?.Open ?? CurrentRate;
             // Change since the laste open
@@ -295,8 +293,7 @@ namespace AndreasReitberger.Stocks.Models
 
         double CalculateEntrancePrice()
         {
-            List<Transaction>? bought = Transactions?.Where(transaction => transaction.Type == TransactionType.Buy).ToList();
-
+            var bought = Transactions?.Where(transaction => transaction.Type == TransactionType.Buy).ToList();
             //double? price = bought?.Select(transaction => transaction.Total).Sum();
             double? amount = bought?.Select(transaction => transaction.Amount).Sum();
 
@@ -332,8 +329,8 @@ namespace AndreasReitberger.Stocks.Models
 
         double CalculateTotalCosts()
         {
-            List<Transaction>? bought = Transactions?.Where(transaction => transaction.Type == TransactionType.Buy).ToList();
-            List<Transaction>? sold = Transactions?.Where(transaction => transaction.Type == TransactionType.Sell).ToList();
+            var bought = Transactions?.Where(transaction => transaction.Type == TransactionType.Buy).ToList();
+            var sold = Transactions?.Where(transaction => transaction.Type == TransactionType.Sell).ToList();
 
             double? boughtTotal = bought?.Select(transaction => transaction.Total).Sum();
             double? soldTotal = sold?.Select(transaction => transaction.Total).Sum();

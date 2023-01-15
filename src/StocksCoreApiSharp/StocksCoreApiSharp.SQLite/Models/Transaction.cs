@@ -1,19 +1,29 @@
-﻿using AndreasReitberger.Core.Utilities;
-using AndreasReitberger.Stocks.Enums;
+﻿using AndreasReitberger.Stocks.Enums;
+using AndreasReitberger.Stocks.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
-using System;
+using SQLite;
+using SQLiteNetExtensions.Attributes;
 
-namespace AndreasReitberger.Stocks.Models
+namespace AndreasReitberger.Stocks.SQLite
 {
-    public partial class Transaction : ObservableObject
+
+    [Table(nameof(Transaction) + "s")]
+
+    public partial class Transaction : ObservableObject, ITransaction
     {
         #region Properties
 
         [ObservableProperty]
+
+        [property: PrimaryKey]
+
         Guid id = Guid.Empty;
 
         [ObservableProperty]
+
+        [property: ForeignKey(typeof(Stock))]
+
         Guid stockId;
 
         [ObservableProperty]

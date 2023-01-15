@@ -1,13 +1,12 @@
-﻿#if SQLite
+﻿using AndreasReitberger.Stocks.SQLite.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SQLite;
 using SQLiteNetExtensions.Attributes;
 
-namespace AndreasReitberger.Stocks.Models.Database
+namespace AndreasReitberger.Stocks.SQLite.Database
 {
     [Table("StockDepot")]
-    [ObservableObject]
-    public partial class StockDepotRelation
+    public partial class StockDepotRelation : ObservableObject, IStockDepotRelation
     {
         [ObservableProperty]
         [property: ForeignKey(typeof(Stock))]
@@ -18,4 +17,3 @@ namespace AndreasReitberger.Stocks.Models.Database
         Guid depotId;
     }
 }
-#endif

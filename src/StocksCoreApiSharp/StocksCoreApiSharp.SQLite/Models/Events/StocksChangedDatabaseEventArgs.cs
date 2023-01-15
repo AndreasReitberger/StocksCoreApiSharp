@@ -1,13 +1,12 @@
-﻿#if SQLite
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 
-namespace AndreasReitberger.Stocks.Models.Events
+namespace AndreasReitberger.Stocks.SQLite.Events
 {
-    public class WatchListsChangedDatabaseEventArgs : DatabaseEventArgs
+    public class StocksChangedDatabaseEventArgs : DatabaseEventArgs
     {
 #region Properties
-        public List<WatchList> WatchLists { get; set; } = new();
+        public List<Stock> Stocks { get; set; } = new();
 #endregion
 
 #region Overrides
@@ -18,4 +17,3 @@ namespace AndreasReitberger.Stocks.Models.Events
 #endregion
     }
 }
-#endif
