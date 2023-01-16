@@ -259,14 +259,17 @@ namespace StocksCoreApiSharp.Test
                     await DatabaseHandler.Instance.SetStocksWithChildrenAsync(watchList.Stocks.ToList(), true);
                     await DatabaseHandler.Instance.SetWatchListWithChildrenAsync(watchList);
                     var loadedWatchLists = await DatabaseHandler.Instance.GetWatchListsWithChildrenAsync();
-                    Assert.IsTrue(loadedWatchLists?.Count > 0);
+
+                    await Task.Delay(20);
+                    Assert.IsTrue(loadedWatchLists?.Count > 0, "Watchlist.Count was 0 or null");
                     WatchList list = loadedWatchLists?.FirstOrDefault(l => l.Id == watchList.Id);
                     Assert.IsNotNull(list);
-                    Assert.IsTrue(list.Stocks?.Count == 2);
+                    Assert.IsTrue(list.Stocks?.Count == 2, "Stocks.Count was not 2");
 
                     // Check if the updating works
+                    await Task.Delay(20);
                     var stocks = await DatabaseHandler.Instance.GetStocksWithChildrenAsync();
-                    Assert.IsTrue(stocks?.Count == 2);
+                    Assert.IsTrue(stocks?.Count == 2, "Stocks.Count was not 2 after loading from database");
 
                     await DatabaseHandler.Instance.CloseDatabaseAsync();
                 }

@@ -153,13 +153,7 @@ namespace AndreasReitberger.Stocks.SQLite
         }
 
         [Ignore]
-        public bool PositiveGrowth
-        {
-            get
-            {
-                return TotalCosts <= CurrentWorth;
-            }
-        }
+        public bool PositiveGrowth => TotalCosts <= CurrentWorth;
 
         #endregion
 
