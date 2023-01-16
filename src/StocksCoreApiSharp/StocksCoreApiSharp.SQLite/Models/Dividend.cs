@@ -38,7 +38,7 @@ namespace AndreasReitberger.Stocks.SQLite
 
         #region Constructor
         public Dividend()
-        {         
+        {
             Id = Guid.NewGuid();
         }
         public Dividend(Guid id)

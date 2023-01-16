@@ -88,7 +88,7 @@ namespace AndreasReitberger.Stocks.SQLite
 
         #region Collections
         [ObservableProperty]
-        [property: ManyToMany(typeof(StockDepotRelation))]   
+        [property: ManyToMany(typeof(StockDepotRelation))]
         ObservableCollection<Stock> stocks = new();
         #endregion
 

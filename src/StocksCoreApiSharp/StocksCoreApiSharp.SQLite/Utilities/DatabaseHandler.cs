@@ -112,9 +112,9 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
                 OnPropertyChanged();
             }
         }
-#endregion
+        #endregion
 
-#region Collections
+        #region Collections
         List<Depot> _depots = new();
         public List<Depot> Depots
         {
@@ -214,9 +214,9 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
                 });
             }
         }
-#endregion
+        #endregion
 
-#region Constructor
+        #region Constructor
         public DatabaseHandler()
         {
 
@@ -230,17 +230,17 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
             IsInitialized = true;
             if (updateInstance) Instance = this;
         }
-#endregion
+        #endregion
 
-#region Methods
+        #region Methods
 
-#region Private
+        #region Private
 
-#endregion
+        #endregion
 
-#region Public
+        #region Public
 
-#region Init
+        #region Init
         public void InitTables()
         {
             Database?.CreateTable<Depot>();
@@ -284,18 +284,18 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
             Database?.CreateTables(CreateFlags.None, tables?.ToArray());
         }
 
-#endregion
+        #endregion
 
-#region Delegates
+        #region Delegates
         public async Task UpdateAllDelegatesAsync()
         {
             //var actions = Delegates.Select(task => new Task(task));
             List<Task> tasks = new(Delegates.Select(task => new Task(task)));
             await Task.WhenAll(tasks);
         }
-#endregion
+        #endregion
 
-#region Database
+        #region Database
         public void InitDatabase(string databasePath)
         {
             DatabaseAsync = new SQLiteAsyncConnection(databasePath);
@@ -422,9 +422,9 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
         {
             Close();
         }
-#endregion
+        #endregion
 
-#region Static
+        #region Static
 
         public static async Task<Tuple<T, TimeSpan?>> StopWatchFunctionAsync<T>(Func<T> action, bool inNewTask = false)
         {
@@ -459,10 +459,10 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
             return result;
         }
 
-#endregion
+        #endregion
 
-#endregion
+        #endregion
 
-#endregion
+        #endregion
     }
 }

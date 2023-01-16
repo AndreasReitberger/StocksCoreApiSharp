@@ -4,7 +4,7 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
 {
     public partial class DatabaseHandler
     {
-#region Instance
+        #region Instance
         static DatabaseHandler? _instanceLazy;
         public static AsyncLazy<DatabaseHandler> InstanceLazy => new(() =>
         {
@@ -17,6 +17,6 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
             return _instanceLazy;
         });
 
-#endregion
+        #endregion
     }
 }

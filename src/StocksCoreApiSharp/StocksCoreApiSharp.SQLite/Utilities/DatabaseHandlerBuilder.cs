@@ -5,11 +5,11 @@
         public class DatabaseHandlerBuilder
         {
 
-#region Instance
+            #region Instance
             readonly DatabaseHandler _databaseHandler = new();
-#endregion
+            #endregion
 
-#region Method
+            #region Method
 
             public DatabaseHandler Build()
             {
@@ -44,7 +44,7 @@
                 return this;
             }
 
-#endregion
+            #endregion
         }
     }
 }

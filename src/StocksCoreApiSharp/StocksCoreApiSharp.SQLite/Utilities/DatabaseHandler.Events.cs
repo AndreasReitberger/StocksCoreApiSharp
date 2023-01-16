@@ -5,7 +5,7 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
 {
     public partial class DatabaseHandler
     {
-#region Events
+        #region Events
         public event EventHandler<DatabaseEventArgs> DataChanged;
         protected virtual void OnDataChanged(DatabaseEventArgs e)
         {
@@ -55,6 +55,6 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
         }
 
 
-#endregion
+        #endregion
     }
 }
