@@ -5,15 +5,15 @@ namespace AndreasReitberger.Stocks.SQLite.Events
 {
     public class DepotsChangedDatabaseEventArgs : DatabaseEventArgs
     {
-#region Properties
+        #region Properties
         public List<Depot> Depots { get; set; } = new();
-#endregion
+        #endregion
 
-#region Overrides
+        #region Overrides
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
-#endregion
+        #endregion
     }
 }

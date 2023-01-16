@@ -8,7 +8,7 @@ namespace AndreasReitberger.Stocks.Interfaces
         #region Properties
         Guid Id { get; set; }
 
-        string Name  { get; set; }
+        string Name { get; set; }
 
         bool IsPrimaryWatchList { get; set; }
 

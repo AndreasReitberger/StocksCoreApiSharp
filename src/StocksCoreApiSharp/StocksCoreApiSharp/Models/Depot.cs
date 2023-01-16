@@ -76,7 +76,7 @@ namespace AndreasReitberger.Stocks.Models
         #endregion
 
         #region Collections
-        [ObservableProperty]   
+        [ObservableProperty]
         ObservableCollection<Stock> stocks = new();
         #endregion
 

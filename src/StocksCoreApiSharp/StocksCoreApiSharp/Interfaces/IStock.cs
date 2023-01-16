@@ -12,7 +12,7 @@ namespace AndreasReitberger.Stocks.Interfaces
         Guid WatchListId { get; set; }
 
         Guid MarketplaceId { get; set; }
-        
+
         string Name { get; set; }
 
         string Symbol { get; set; }
@@ -70,7 +70,7 @@ namespace AndreasReitberger.Stocks.Interfaces
         ObservableCollection<ITransaction> Transactions { get; set; }
         ObservableCollection<IDividend> Dividends { get; set; }
         */
-       
+
         #endregion
 
         #region Methods

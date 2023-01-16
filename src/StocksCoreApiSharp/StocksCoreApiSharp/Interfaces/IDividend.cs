@@ -17,7 +17,7 @@
         double Tax { get; set; }
 
         public double Total { get; }
-        public double TaxPercentage { get;  }
+        public double TaxPercentage { get; }
         public double Margin { get; }
         #endregion
     }

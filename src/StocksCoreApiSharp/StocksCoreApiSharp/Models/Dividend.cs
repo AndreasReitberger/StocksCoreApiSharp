@@ -33,7 +33,7 @@ namespace AndreasReitberger.Stocks.Models
 
         #region Constructor
         public Dividend()
-        {         
+        {
             Id = Guid.NewGuid();
         }
         public Dividend(Guid id)

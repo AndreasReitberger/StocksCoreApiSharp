@@ -7,11 +7,11 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
 {
     public partial class DatabaseHandler
     {
-    #region Methods
+        #region Methods
 
-#region Public
+        #region Public
 
-#region Depots
+        #region Depots
         public async Task<List<Depot>> GetDepotsWithChildrenAsync()
         {
             // To trigger event
@@ -57,9 +57,9 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
             return await DatabaseAsync.DeleteAsync<Depot>(depot?.Id);
         }
 
-#endregion
+        #endregion
 
-#region WatchLists
+        #region WatchLists
         public async Task<List<WatchList>> GetWatchListsWithChildrenAsync()
         {
             // To trigger event
@@ -105,9 +105,9 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
             return await DatabaseAsync.DeleteAsync<WatchList>(watchList?.Id);
         }
 
-#endregion
+        #endregion
 
-#region Marketplaces
+        #region Marketplaces
         public async Task<List<Marketplace>> GetMarketplacesWithChildrenAsync()
         {
             // To trigger event
@@ -153,9 +153,9 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
             return await DatabaseAsync.DeleteAsync<Marketplace>(marketplace?.Id);
         }
 
-#endregion
+        #endregion
 
-#region Stocks
+        #region Stocks
         public async Task<List<Stock>> GetStocksWithChildrenAsync()
         {
             Stocks = await DatabaseAsync
@@ -213,9 +213,9 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
         {
             return await DeleteStocksAsync(stocks.ToList());
         }
-#endregion
+        #endregion
 
-#region StockPriceRanges
+        #region StockPriceRanges
         public async Task<List<StockPriceRange>> GetStockPriceRangesWithChildrenAsync()
         {
             List<StockPriceRange> stockPriceRanges = await DatabaseAsync
@@ -269,9 +269,9 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
         {
             return await DeleteStockPriceRangesAsync(stockPriceRanges.ToList());
         }
-#endregion
+        #endregion
 
-#region Dividends
+        #region Dividends
         public async Task<List<Dividend>> GetDividendsWithChildrenAsync()
         {
             return await DatabaseAsync
@@ -316,9 +316,9 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
             return results.ToArray();
         }
 
-#endregion
+        #endregion
 
-#region Transactions
+        #region Transactions
         public async Task<List<Transaction>> GetTransactionsWithChildrenAsync()
         {
             Transactions = await DatabaseAsync
@@ -366,10 +366,10 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
             return results.ToArray();
         }
 
-#endregion
+        #endregion
 
-#endregion
+        #endregion
 
-    #endregion
+        #endregion
     }
 }

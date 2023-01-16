@@ -5,16 +5,16 @@ namespace AndreasReitberger.Stocks.SQLite.Events
 {
     public class DatabaseEventArgs : EventArgs
     {
-#region Properties
+        #region Properties
         public string Message { get; set; } = string.Empty;
         public TimeSpan? Duration { get; set; } = TimeSpan.FromSeconds(0);
-#endregion
+        #endregion
 
-#region Overrides
+        #region Overrides
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
-#endregion
+        #endregion
     }
 }
