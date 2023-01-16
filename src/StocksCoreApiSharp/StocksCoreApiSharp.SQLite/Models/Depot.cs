@@ -1,16 +1,24 @@
-﻿using AndreasReitberger.Stocks.Models.Events;
-using Newtonsoft.Json;
+﻿using AndreasReitberger.Stocks.Interfaces;
+using AndreasReitberger.Stocks.Models.Events;
+using AndreasReitberger.Stocks.SQLite.Database;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
+using SQLite;
+using SQLiteNetExtensions.Attributes;
 using System.Collections.ObjectModel;
 
-namespace AndreasReitberger.Stocks.Models
+namespace AndreasReitberger.Stocks.SQLite
 {
-    [ObservableObject]
-    public partial class Depot
+
+    [Table(nameof(Depot) + "s")]
+    public partial class Depot : ObservableObject, IDepot
     {
         #region Properties
 
         [ObservableProperty]
+
+        [property: PrimaryKey]
+
         Guid id = Guid.Empty;
 
         [ObservableProperty]
@@ -64,6 +72,9 @@ namespace AndreasReitberger.Stocks.Models
         [ObservableProperty]
         double growth = 0;
 
+
+        [Ignore]
+
         public bool PositiveGrowth
         {
             get
@@ -76,7 +87,8 @@ namespace AndreasReitberger.Stocks.Models
         #endregion
 
         #region Collections
-        [ObservableProperty]   
+        [ObservableProperty]
+        [property: ManyToMany(typeof(StockDepotRelation))]   
         ObservableCollection<Stock> stocks = new();
         #endregion
 

@@ -1,8 +1,7 @@
-﻿#if SQLite
-using AndreasReitberger.Stocks.Models.Events;
+﻿using AndreasReitberger.Stocks.SQLite.Events;
 using System;
 
-namespace AndreasReitberger.Stocks.Utilities
+namespace AndreasReitberger.Stocks.SQLite.Utilities
 {
     public partial class DatabaseHandler
     {
@@ -59,4 +58,3 @@ namespace AndreasReitberger.Stocks.Utilities
 #endregion
     }
 }
-#endif

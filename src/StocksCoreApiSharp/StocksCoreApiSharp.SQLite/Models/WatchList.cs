@@ -1,15 +1,25 @@
-﻿using AndreasReitberger.Stocks.Models.Events;
+﻿using AndreasReitberger.Stocks.Interfaces;
+using AndreasReitberger.Stocks.Models.Events;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
+using SQLite;
+using SQLiteNetExtensions.Attributes;
 using System.Collections.ObjectModel;
+using AndreasReitberger.Stocks.SQLite.Database;
 
-namespace AndreasReitberger.Stocks.Models
+namespace AndreasReitberger.Stocks.SQLite
 {
-    public partial class WatchList : ObservableObject
+
+    [Table(nameof(WatchList) + "s")]
+
+    public partial class WatchList : ObservableObject, IWatchList
     {
         #region Properties
 
         [ObservableProperty]
+
+        [property: PrimaryKey]
+
         Guid id = Guid.Empty;
         partial void OnIdChanged(Guid value)
         {
@@ -48,7 +58,9 @@ namespace AndreasReitberger.Stocks.Models
 
         #region Collections
         [ObservableProperty]
+        [property: ManyToMany(typeof(StockWatchListRelation))]
         ObservableCollection<Stock> stocks = new();
+        //ObservableCollection<IStock> stocks = new();
 
         #endregion
 

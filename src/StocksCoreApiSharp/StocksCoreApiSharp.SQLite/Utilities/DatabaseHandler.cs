@@ -1,21 +1,17 @@
-﻿#if SQLite
+﻿
 using AndreasReitberger.Core.Utilities;
-using AndreasReitberger.Stocks.Models;
-using AndreasReitberger.Stocks.Models.Additions;
-using AndreasReitberger.Stocks.Models.Database;
-using AndreasReitberger.Stocks.Models.Events;
+using AndreasReitberger.Stocks.Interfaces;
+using AndreasReitberger.Stocks.SQLite.Additions;
+using AndreasReitberger.Stocks.SQLite.Database;
+using AndreasReitberger.Stocks.SQLite.Events;
 using SQLite;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace AndreasReitberger.Stocks.Utilities
+namespace AndreasReitberger.Stocks.SQLite.Utilities
 {
     public partial class DatabaseHandler : BaseModel//, IDatabaseHandler
     {
-#region Instance
+        #region Instance
         static DatabaseHandler? _instance;
         static readonly object Lock = new();
         public static DatabaseHandler? Instance
@@ -42,9 +38,9 @@ namespace AndreasReitberger.Stocks.Utilities
             }
 
         }
-#endregion
+        #endregion
 
-#region Properties
+        #region Properties
         bool _isInitialized = false;
         public bool IsInitialized
         {
@@ -258,7 +254,6 @@ namespace AndreasReitberger.Stocks.Utilities
             Database?.CreateTable<StockMarketplaceRelation>();
             Database?.CreateTable<Dividend>();
             Database?.CreateTable<Transaction>();
-
             //Database?.CreateTable<DatabaseSettingsKeyValuePair>();
         }
 
@@ -471,4 +466,3 @@ namespace AndreasReitberger.Stocks.Utilities
 #endregion
     }
 }
-#endif

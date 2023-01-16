@@ -1,18 +1,25 @@
-﻿using Newtonsoft.Json;
+﻿
+using AndreasReitberger.Stocks.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Newtonsoft.Json;
+using SQLite;
+using SQLiteNetExtensions.Attributes;
 using System.Collections.ObjectModel;
 using System.Drawing;
-using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace AndreasReitberger.Stocks.Models.Additions
+namespace AndreasReitberger.Stocks.SQLite.Additions
 {
-    [ObservableObject]
-    public partial class StockDividendAppointment
+
+    [Table(nameof(StockDividendAppointment) + "s")]
+    public partial class StockDividendAppointment : ObservableObject, IStockDividendAppointment
     {
         #region  Properties
         [ObservableProperty]
+        [property: PrimaryKey]
         Guid id;
 
         [ObservableProperty]
+        [property: ForeignKey(typeof(Stock))]
         Guid stockId;
 
         [ObservableProperty]
@@ -50,6 +57,10 @@ namespace AndreasReitberger.Stocks.Models.Additions
 
         [ObservableProperty]
         string? recurrenceRule;
+
+        #endregion
+
+        #region COllections
 
         [ObservableProperty]
         [property: OneToMany]

@@ -1,8 +1,7 @@
-﻿#if SQLite
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 
-namespace AndreasReitberger.Stocks.Models.Events
+namespace AndreasReitberger.Stocks.SQLite.Events
 {
     public class DatabaseEventArgs : EventArgs
     {
@@ -19,4 +18,3 @@ namespace AndreasReitberger.Stocks.Models.Events
 #endregion
     }
 }
-#endif

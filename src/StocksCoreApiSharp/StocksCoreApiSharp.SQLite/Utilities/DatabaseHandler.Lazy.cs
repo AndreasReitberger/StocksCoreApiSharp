@@ -1,5 +1,6 @@
-﻿#if SQLite
-namespace AndreasReitberger.Stocks.Utilities
+﻿using AndreasReitberger.Stocks.Utilities;
+
+namespace AndreasReitberger.Stocks.SQLite.Utilities
 {
     public partial class DatabaseHandler
     {
@@ -19,4 +20,3 @@ namespace AndreasReitberger.Stocks.Utilities
 #endregion
     }
 }
-#endif

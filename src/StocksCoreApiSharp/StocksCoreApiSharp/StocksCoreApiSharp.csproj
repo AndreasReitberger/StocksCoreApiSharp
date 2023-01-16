@@ -20,24 +20,12 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<LangVersion>10.0</LangVersion>
-	<Version>1.0.3</Version>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>$(DefineConstants)TRACE;SQLite</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>$(DefineConstants)TRACE;SQLite</DefineConstants>
+	<Version>1.0.3-preview</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0-preview1" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0-preview3" />
     <PackageReference Include="RCoreSharp" Version="1.0.8" />
-    <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
-    <PackageReference Include="SQLiteNetExtensions" Version="2.1.0" />
-    <PackageReference Include="SQLiteNetExtensions.Async" Version="2.1.0" />
-    <PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.2" />
 	<None Include="..\..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 

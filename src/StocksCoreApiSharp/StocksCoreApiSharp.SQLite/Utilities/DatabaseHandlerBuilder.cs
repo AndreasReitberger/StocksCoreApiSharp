@@ -1,8 +1,4 @@
-﻿#if SQLite
-using System;
-using System.Collections.Generic;
-
-namespace AndreasReitberger.Stocks.Utilities
+﻿namespace AndreasReitberger.Stocks.SQLite.Utilities
 {
     public partial class DatabaseHandler
     {
@@ -52,4 +48,3 @@ namespace AndreasReitberger.Stocks.Utilities
         }
     }
 }
-#endif

@@ -1,14 +1,13 @@
-﻿#if SQLite
-using AndreasReitberger.Stocks.Models;
-using AndreasReitberger.Stocks.Models.Additions;
+﻿using AndreasReitberger.Stocks.Interfaces;
+using AndreasReitberger.Stocks.SQLite.Additions;
 using SQLiteNetExtensionsAsync.Extensions;
 using System.Collections.ObjectModel;
 
-namespace AndreasReitberger.Stocks.Utilities
+namespace AndreasReitberger.Stocks.SQLite.Utilities
 {
     public partial class DatabaseHandler
     {
-#region Methods
+    #region Methods
 
 #region Public
 
@@ -176,6 +175,7 @@ namespace AndreasReitberger.Stocks.Utilities
             return stock;
         }
 
+        //public async Task SetStocksWithChildrenAsync(List<IStock> stocks, bool replaceExisting = true) => await SetStocksWithChildrenAsync(stocks: stocks.Cast<Stock>()?.ToList(), replaceExisting: replaceExisting).ConfigureAwait(false);
         public async Task SetStocksWithChildrenAsync(List<Stock> stocks, bool replaceExisting = true)
         {
             if (replaceExisting)
@@ -370,7 +370,6 @@ namespace AndreasReitberger.Stocks.Utilities
 
 #endregion
 
-#endregion
+    #endregion
     }
 }
-#endif
