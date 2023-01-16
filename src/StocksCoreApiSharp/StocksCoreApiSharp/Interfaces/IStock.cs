@@ -1,10 +1,4 @@
 ﻿using AndreasReitberger.Stocks.Enums;
-using AndreasReitberger.Stocks.Models;
-using AndreasReitberger.Stocks.Models.Additions;
-using CommunityToolkit.Mvvm.ComponentModel;
-using SQLite;
-using System.Collections.ObjectModel;
-using System.Transactions;
 
 namespace AndreasReitberger.Stocks.Interfaces
 {
