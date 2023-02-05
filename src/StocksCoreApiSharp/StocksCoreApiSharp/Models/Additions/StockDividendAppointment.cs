@@ -31,15 +31,12 @@ namespace AndreasReitberger.Stocks.Models.Additions
         string? notes;
 
         [ObservableProperty]
-        [property: Ignore]
         TimeZoneInfo? startTimeZone;
 
         [ObservableProperty]
-        [property: Ignore]
         TimeZoneInfo? endTimeZone;
 
         [ObservableProperty]
-        [property: Ignore]
         Color background;
 
         [ObservableProperty]
@@ -52,7 +49,6 @@ namespace AndreasReitberger.Stocks.Models.Additions
         string? recurrenceRule;
 
         [ObservableProperty]
-        [property: OneToMany]
         ObservableCollection<DateTime>? recurrenceExceptions = new();
 
         #endregion
