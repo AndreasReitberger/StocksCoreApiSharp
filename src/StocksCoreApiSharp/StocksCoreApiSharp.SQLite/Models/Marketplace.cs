@@ -36,7 +36,7 @@ namespace AndreasReitberger.Stocks.SQLite
         #region Collections
         [ObservableProperty]
         [property: ManyToMany(typeof(StockMarketplaceRelation))]
-        ObservableCollection<IStock> stocks = new();
+        ObservableCollection<Stock> stocks = new();
 
         #endregion
 
