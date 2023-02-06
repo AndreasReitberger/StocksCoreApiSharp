@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<Import Project="..\..\..\common.props" />
+	<Import Project="..\..\common.props" />
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;net6.0;net7.0</TargetFrameworks>
     <!--<TargetFramework>netstandard2.1</TargetFramework>-->
@@ -20,7 +20,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
     <PackageReference Include="RCoreSharp" Version="1.0.8" />
-	<None Include="..\..\..\README.md" Pack="true" PackagePath="\" />
+	<None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>
