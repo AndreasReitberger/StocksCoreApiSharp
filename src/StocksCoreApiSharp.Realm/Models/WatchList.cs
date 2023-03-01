@@ -1,47 +1,86 @@
 ﻿using AndreasReitberger.Stocks.Interfaces;
 using AndreasReitberger.Stocks.Models.Events;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
-using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.Stocks.Realm
 {
-    public partial class WatchList : ObservableObject, IWatchList
+    public partial class WatchList : RealmObject, IWatchList
     {
         #region Properties
 
-        [ObservableProperty]
         [property: PrimaryKey]
-        Guid id = Guid.Empty;
-        partial void OnIdChanged(Guid value)
+        Guid id { get; set; } = Guid.Empty;
+        public Guid Id
+        {
+            get => id;
+            set
+            {
+                id = value;
+                OnIdChanged(value);
+            }
+        }
+        void OnIdChanged(Guid value)
         {
             NotifyListeners();
         }
 
-        [ObservableProperty]
-        string name = "";
-        partial void OnNameChanged(string value)
+        [Required]
+        string name { get; set; } = "";
+        public string Name
+        {
+            get => name;
+            set
+            {
+                name = value;
+                OnNameChanged(value);
+            }
+        }
+        void OnNameChanged(string value)
         {
             NotifyListeners();
         }
 
-        [ObservableProperty]
-        bool isPrimaryWatchList = false;
-        partial void OnIsPrimaryWatchListChanged(bool value)
+        bool isPrimaryWatchList { get; set; } = false;
+        public bool IsPrimaryWatchList
+        {
+            get => isPrimaryWatchList;
+            set
+            {
+                isPrimaryWatchList = value;
+                OnIsPrimaryWatchListChanged(value);
+            }
+        }
+        void OnIsPrimaryWatchListChanged(bool value)
         {
             NotifyListeners();
         }
 
-        [ObservableProperty]
-        DateTime? lastRefresh;
-        partial void OnLastRefreshChanged(DateTime? value)
+        DateTimeOffset? lastRefresh { get; set; }
+        public DateTimeOffset? LastRefresh
+        {
+            get => lastRefresh;
+            set
+            {
+                lastRefresh = value;
+                OnLastRefreshChanged(value);
+            }
+        }
+        void OnLastRefreshChanged(DateTimeOffset? value)
         {
             NotifyListeners();
         }
 
-        [ObservableProperty]
-        DateTime? dateOfCreation = null;
-        partial void OnDateOfCreationChanged(DateTime? value)
+        DateTimeOffset? dateOfCreation { get; set; } = null;
+        public DateTimeOffset? DateOfCreation
+        {
+            get => dateOfCreation;
+            set
+            {
+                dateOfCreation = value;
+                OnDateOfCreationChanged(value);
+            }
+        }
+        void OnDateOfCreationChanged(DateTimeOffset? value)
         {
             NotifyListeners();
         }
@@ -49,9 +88,8 @@ namespace AndreasReitberger.Stocks.Realm
         #endregion
 
         #region Collections
-        [ObservableProperty]
         //[property: ManyToMany(typeof(StockWatchListRelation))]
-        ObservableCollection<Stock> stocks = new();
+        public IList<Stock> Stocks { get; }
         //ObservableCollection<IStock> stocks = new();
 
         #endregion
@@ -60,34 +98,34 @@ namespace AndreasReitberger.Stocks.Realm
         public WatchList()
         {
             Id = Guid.NewGuid();
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public WatchList(string name)
         {
             Id = Guid.NewGuid();
             Name = name;
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public WatchList(Guid id)
         {
             Id = id;
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public WatchList(Guid id, string name)
         {
             Id = id;
             Name = name;
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
         #endregion
 
         #region Destructor
         ~WatchList()
         {
-            Stocks.CollectionChanged -= Stocks_CollectionChanged;
+            Stocks.AsRealmCollection().CollectionChanged -= Stocks_CollectionChanged;
         }
         #endregion
 

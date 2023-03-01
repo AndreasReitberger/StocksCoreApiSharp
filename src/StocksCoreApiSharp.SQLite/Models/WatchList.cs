@@ -41,15 +41,15 @@ namespace AndreasReitberger.Stocks.SQLite
         }
 
         [ObservableProperty]
-        DateTime? lastRefresh;
-        partial void OnLastRefreshChanged(DateTime? value)
+        DateTimeOffset? lastRefresh;
+        partial void OnLastRefreshChanged(DateTimeOffset? value)
         {
             NotifyListeners();
         }
 
         [ObservableProperty]
-        DateTime? dateOfCreation = null;
-        partial void OnDateOfCreationChanged(DateTime? value)
+        DateTimeOffset? dateOfCreation = null;
+        partial void OnDateOfCreationChanged(DateTimeOffset? value)
         {
             NotifyListeners();
         }

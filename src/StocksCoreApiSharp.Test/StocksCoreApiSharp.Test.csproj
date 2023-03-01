@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\StocksCoreApiSharp.Realm\StocksCoreApiSharp.Realm.csproj" />
     <ProjectReference Include="..\StocksCoreApiSharp.SQLite\StocksCoreApiSharp.SQLite.csproj" />
   </ItemGroup>
 

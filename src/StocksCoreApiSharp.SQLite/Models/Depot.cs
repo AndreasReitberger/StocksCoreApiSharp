@@ -37,10 +37,10 @@ namespace AndreasReitberger.Stocks.SQLite
         }
 
         [ObservableProperty]
-        DateTime? lastRefresh;
+        DateTimeOffset? lastRefresh;
 
         [ObservableProperty]
-        DateTime? dateOfCreation = null;
+        DateTimeOffset? dateOfCreation = null;
 
         [ObservableProperty]
         double totalWorth = 0;

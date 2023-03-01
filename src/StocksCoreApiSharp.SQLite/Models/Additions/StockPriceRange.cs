@@ -24,7 +24,7 @@ namespace AndreasReitberger.Stocks.SQLite.Additions
         Guid stockId = Guid.Empty;
 
         [ObservableProperty]
-        DateTime date;
+        DateTimeOffset date;
 
         [ObservableProperty]
         double open;

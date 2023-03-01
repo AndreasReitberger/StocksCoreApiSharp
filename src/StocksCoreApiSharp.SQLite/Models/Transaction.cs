@@ -27,10 +27,10 @@ namespace AndreasReitberger.Stocks.SQLite
         Guid stockId;
 
         [ObservableProperty]
-        TransactionType? type = null;
+        TransactionType type;
 
         [ObservableProperty]
-        DateTime? dateOfCreation = null;
+        DateTimeOffset? dateOfCreation = null;
 
         [ObservableProperty]
         double amount = 0;

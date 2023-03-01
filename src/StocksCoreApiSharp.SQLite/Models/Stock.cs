@@ -49,7 +49,7 @@ namespace AndreasReitberger.Stocks.SQLite
         bool isRerfresing = false;
 
         [ObservableProperty]
-        DateTime? lastRefresh;
+        DateTimeOffset? lastRefresh;
 
         [ObservableProperty]
         double? dividendForecast;
@@ -60,7 +60,7 @@ namespace AndreasReitberger.Stocks.SQLite
         */
 
         [ObservableProperty]
-        DateTime? dateOfAGM;
+        DateTimeOffset? dateOfAGM;
 
         [ObservableProperty]
         string currency;

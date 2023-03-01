@@ -1,37 +1,28 @@
 ﻿using AndreasReitberger.Stocks.Interfaces;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 
 namespace AndreasReitberger.Stocks.Realm.Additions
 {
-    public partial class StockPriceRange : ObservableObject, IStockPriceRange
+    public partial class StockPriceRange : RealmObject, IStockPriceRange
     {
         #region Properties
-        [ObservableProperty]
-        [property: PrimaryKey]
-        Guid id = Guid.Empty;
+        [PrimaryKey]
+        public Guid Id { get; set; } = Guid.Empty;
 
-        [ObservableProperty]
         //[property: ForeignKey(typeof(Depot))]
-        Guid stockId = Guid.Empty;
+        public Guid StockId { get; set; } = Guid.Empty;
 
-        [ObservableProperty]
-        DateTime date;
+        public DateTimeOffset Date { get; set; }
 
-        [ObservableProperty]
-        double open;
+        public double Open { get; set; }
 
-        [ObservableProperty]
-        double close;
+        public double Close { get; set; }
 
-        [ObservableProperty]
-        double high;
+        public double High { get; set; }
 
-        [ObservableProperty]
-        double low;
+        public double Low { get; set; }
 
-        [ObservableProperty]
-        double volume;
+        public double Volume { get; set; }
         #endregion
 
         #region Constructor

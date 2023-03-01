@@ -1,37 +1,29 @@
 ﻿using AndreasReitberger.Stocks.Interfaces;
 using AndreasReitberger.Stocks.Models.Events;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
-using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.Stocks.Realm
 {
-    public partial class Marketplace : ObservableObject, IMarketplace
+    public partial class Marketplace : RealmObject, IMarketplace
     {
         #region Properties
 
-        [ObservableProperty]
-        [property: PrimaryKey]
-        Guid id = Guid.Empty;
+        [PrimaryKey]
+        public Guid Id { get; set; } = Guid.Empty;
 
-        [ObservableProperty]
-        string name = "";
+        public string Name { get; set; } = "";
 
-        [ObservableProperty]
-        bool isOpen = false;
+        public bool IsOpen { get; set; } = false;
 
-        [ObservableProperty]
-        DateTime? lastRefresh;
+        public DateTimeOffset? LastRefresh { get; set; }
 
-        [ObservableProperty]
-        DateTime? dateOfCreation = null;
+        public DateTimeOffset? DateOfCreation { get; set; } = null;
 
         #endregion
 
         #region Collections
-        [ObservableProperty]
         //[property: ManyToMany(typeof(StockMarketplaceRelation))]
-        ObservableCollection<Stock> stocks = new();
+        public IList<Stock> Stocks { get; } 
 
         #endregion
 
@@ -39,34 +31,34 @@ namespace AndreasReitberger.Stocks.Realm
         public Marketplace()
         {
             Id = Guid.NewGuid();
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public Marketplace(string name)
         {
             Id = Guid.NewGuid();
             Name = name;
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public Marketplace(Guid id)
         {
             Id = id;
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public Marketplace(Guid id, string name)
         {
             Id = id;
             Name = name;
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
         #endregion
 
         #region Destructor
         ~Marketplace()
         {
-            Stocks.CollectionChanged -= Stocks_CollectionChanged;
+            Stocks.AsRealmCollection().CollectionChanged -= Stocks_CollectionChanged;
         }
         #endregion
 

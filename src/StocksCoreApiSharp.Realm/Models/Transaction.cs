@@ -1,33 +1,31 @@
 ﻿using AndreasReitberger.Stocks.Enums;
 using AndreasReitberger.Stocks.Interfaces;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 
 namespace AndreasReitberger.Stocks.Realm
 {
-    public partial class Transaction : ObservableObject, ITransaction
+    public partial class Transaction : RealmObject, ITransaction
     {
         #region Properties
 
-        [ObservableProperty]
-        [property: PrimaryKey]
-        Guid id = Guid.Empty;
+        [PrimaryKey]
+        public Guid Id { get; set; } = Guid.Empty;
 
-        [ObservableProperty]
         //[property: ForeignKey(typeof(Stock))]
-        Guid stockId;
+        public Guid StockId { get; set; }
 
-        [ObservableProperty]
-        TransactionType? type = null;
+        public TransactionType Type
+        {
+            get => (TransactionType)TypeId;
+            set { TypeId = (int)value; }
+        }
+        public int TypeId { get; set; }
 
-        [ObservableProperty]
-        DateTime? dateOfCreation = null;
+        public DateTimeOffset? DateOfCreation { get; set; } = null;
 
-        [ObservableProperty]
-        double amount = 0;
+        public double Amount { get; set; } = 0;
 
-        [ObservableProperty]
-        double price = 0;
+        public double Price { get; set; } = 0;
 
         public double Total => Math.Round(Amount * Price, 2);
         #endregion

@@ -2,149 +2,196 @@
 using AndreasReitberger.Stocks.Interfaces;
 using AndreasReitberger.Stocks.Models.Events;
 using AndreasReitberger.Stocks.Realm.Additions;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
-using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.Stocks.Realm
 {
-    public partial class Stock : ObservableObject, IStock
+    public partial class Stock : RealmObject, IStock
     {
         #region Properties
-        [ObservableProperty]
-        [property: PrimaryKey]
-        Guid id = Guid.Empty;
+        [PrimaryKey]
+        public Guid Id { get; set; } = Guid.Empty;
 
-        [ObservableProperty]
-        //[property: ForeignKey(typeof(Depot))]
-        Guid depotId = Guid.Empty;
+        //[ForeignKey(typeof(Depot))]
+        public Guid DepotId { get; set; } = Guid.Empty;
 
-        [ObservableProperty]
-        //[property: ForeignKey(typeof(WatchList))]
-        Guid watchListId = Guid.Empty;
+        //[ForeignKey(typeof(WatchList))]
+        public Guid WatchListId { get; set; } = Guid.Empty;
 
-        [ObservableProperty]
-        //[property: ForeignKey(typeof(Marketplace))]
-        Guid marketplaceId = Guid.Empty;
+        //[ForeignKey(typeof(Marketplace))]
+        public Guid MarketplaceId { get; set; } = Guid.Empty;
 
-        [ObservableProperty]
-        string name = "";
+        public string Name { get; set; } = "";
 
-        [ObservableProperty]
-        string symbol = "";
+        public string Symbol { get; set; } = "";
 
-        [ObservableProperty]
-        string iSIN = "";
+        public string ISIN { get; set; } = "";
 
-        [ObservableProperty]
-        string wKN = "";
+        public string WKN { get; set; } = "";
 
-        [ObservableProperty]
-        string marketplace = "";
+        public string Marketplace { get; set; } = "";
 
-        [ObservableProperty]
-        bool isRerfresing = false;
+        public bool IsRerfresing { get; set; } = false;
 
-        [ObservableProperty]
-        DateTime? lastRefresh;
+        public DateTimeOffset? LastRefresh { get; set; }
 
-        [ObservableProperty]
-        double? dividendForecast;
+        public double? DividendForecast { get; set; }
 
-        /*
-        [ObservableProperty]
-        Dictionary <int, double> dividendHistory;
-        */
+        public DateTimeOffset? DateOfAGM { get; set; }
 
-        [ObservableProperty]
-        DateTime? dateOfAGM;
+        public string Currency { get; set; }
 
-        [ObservableProperty]
-        string currency;
-
-        [ObservableProperty]
-        double? currentRate;
-        partial void OnCurrentRateChanged(double? value)
+        double? currentRate { get; set; }
+        public double? CurrentRate
+        {
+            get => currentRate;
+            set
+            {
+                currentRate = value;
+                OnCurrentRateChanged(value);
+            }
+        }
+        void OnCurrentRateChanged(double? value)
         {
             NotifyListeners();
             UpdateChangedIndicator();
         }
 
-        [ObservableProperty]
-        bool respectDividendsForEntrancePrice = true;
-        partial void OnRespectDividendsForEntrancePriceChanged(bool value)
+        bool respectDividendsForEntrancePrice { get; set; } = true;
+        public bool RespectDividendsForEntrancePrice
+        {
+            get => respectDividendsForEntrancePrice;
+            set
+            {
+                respectDividendsForEntrancePrice = value;
+                OnRespectDividendsForEntrancePriceChanged(value);
+            }
+        }
+        void OnRespectDividendsForEntrancePriceChanged(bool value)
         {
             NotifyListeners();
         }
 
-        [ObservableProperty]
-        double quantity = 0;
+        public double Quantity { get; set; } = 0;
 
-        [ObservableProperty]
-        double entrancePrice = 0;
-        partial void OnEntrancePriceChanged(double value)
+        double entrancePrice { get; set; } = 0;
+        public double EntrancePrice
+        {
+            get => entrancePrice;
+            set
+            {
+                entrancePrice = value;
+                OnEntrancePriceChanged(value);
+            }
+        }
+        void OnEntrancePriceChanged(double value)
         {
             NotifyListeners();
             UpdateChangedIndicator();
         }
 
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(PositiveGrowth))]
-        double totalCosts = 0;
-        partial void OnTotalCostsChanged(double value)
+        //[NotifyPropertyChangedFor(nameof(PositiveGrowth))]
+        double totalCosts { get; set; } = 0;
+        public double TotalCosts
+        {
+            get => totalCosts;
+            set
+            {
+                totalCosts = value;
+                OnTotalCostsChanged(value);
+            }
+        }
+        void OnTotalCostsChanged(double value)
         {
             NotifyListeners();
         }
 
-        [ObservableProperty]
-        double totalDividends = 0;
+        public double TotalDividends { get; set; } = 0;
 
-        [ObservableProperty]
-        double growth = 0;
+        public double Growth { get; set; } = 0;
 
-        [ObservableProperty]
-        double growthPercentage = 0;
+        public double GrowthPercentage { get; set; } = 0;
 
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(PositiveGrowth))]
-        double currentWorth = 0;
 
-        partial void OnCurrentWorthChanged(double value)
+        //[NotifyPropertyChangedFor(nameof(PositiveGrowth))]
+        double currentWorth { get; set; } = 0;
+        public double CurrentWorth
+        {
+            get => currentWorth;
+            set
+            {
+                currentWorth = value;
+                OnCurrentWorthChanged(value);
+            }
+        }
+        void OnCurrentWorthChanged(double value)
         {
             NotifyListeners();
         }
 
-        [ObservableProperty]
-        double volume = 0;
+        public double Volume { get; set; } = 0;
 
-        [ObservableProperty]
-        [property: Ignored]
-        double? priceOpen = 0;
-        partial void OnPriceOpenChanged(double? value)
+        [Ignored]
+        double? priceOpen { get; set; } = 0;
+        public double? PriceOpen
+        {
+            get => priceOpen;
+            set
+            {
+                priceOpen = value;
+                OnPriceOpenChanged(value);
+            }
+        }
+        void OnPriceOpenChanged(double? value)
         {
             NotifyListeners();
         }
 
-        [ObservableProperty]
-        [property: Ignored]
-        double? priceClose = 0;
-        partial void OnPriceCloseChanged(double? value)
+        [Ignored]
+        double? priceClose { get; set; } = 0;
+        public double? PriceClose
+        {
+            get => priceClose;
+            set
+            {
+                priceClose = value;
+                OnPriceCloseChanged(value);
+            }
+        }
+        void OnPriceCloseChanged(double? value)
         {
             NotifyListeners();
         }
 
-        [ObservableProperty]
-        [property: Ignored]
-        double? change = 0;
-        partial void OnChangeChanged(double? value)
+        [Ignored]
+        double? change { get; set; } = 0;
+        public double? Change
+        {
+            get => change;
+            set
+            {
+                change = value;
+                OnChangeChanged(value);
+            }
+        }
+        void OnChangeChanged(double? value)
         {
             NotifyListeners();
         }
 
-        [ObservableProperty]
-        [property: Ignored]
-        ValueChangedIndicator changedIndicator = ValueChangedIndicator.Unchanged;
-        partial void OnChangedIndicatorChanged(ValueChangedIndicator value)
+
+        [Ignored]
+        ValueChangedIndicator changedIndicator { get; set; } = ValueChangedIndicator.Unchanged;
+        public ValueChangedIndicator ChangedIndicator
+        {
+            get => changedIndicator;
+            set
+            {
+                changedIndicator = value;
+                OnChangedIndicatorChanged(value);
+            }
+        }
+        void OnChangedIndicatorChanged(ValueChangedIndicator value)
         {
             NotifyListeners();
         }
@@ -156,47 +203,45 @@ namespace AndreasReitberger.Stocks.Realm
 
         #region Collections
 
-        [ObservableProperty]
-        //[property: OneToMany(CascadeOperations = CascadeOperation.All)]
-        ObservableCollection<Transaction> transactions = new();
+        //[OneToMany(CascadeOperations = CascadeOperation.All)]
+        public IList<Transaction> Transactions { get; }
         //ObservableCollection<ITransaction> transactions = new();
 
-        [ObservableProperty]
-        //[property: OneToMany(CascadeOperations = CascadeOperation.All)]
-        ObservableCollection<Dividend> dividends = new();
+        //[OneToMany(CascadeOperations = CascadeOperation.All)]
+        public IList<Dividend> Dividends { get; }
         //ObservableCollection<IDividend> dividends = new();
 
-        [ObservableProperty]
-        //[property: OneToMany(CascadeOperations = CascadeOperation.All)]
-        ObservableCollection<StockPriceRange> priceRanges = new();
+        //[OneToMany(CascadeOperations = CascadeOperation.All)]
+        public IList<StockPriceRange> PriceRanges { get; }
         //ObservableCollection<IStockPriceRange> priceRanges = new();
-        partial void OnPriceRangesChanged(ObservableCollection<StockPriceRange> value)
-        {
-            UpdateOpenClosePrices();
-        }
+        void OnPriceRangesChanged() => UpdateOpenClosePrices();
+        
         #endregion
 
         #region Constructor
         public Stock()
         {
             Id = Guid.NewGuid();
-            Dividends.CollectionChanged += Dividends_CollectionChanged;
-            Transactions.CollectionChanged += Transactions_CollectionChanged;
+            Dividends.AsRealmCollection().CollectionChanged += Dividends_CollectionChanged;
+            Transactions.AsRealmCollection().CollectionChanged += Transactions_CollectionChanged;
+            PriceRanges.AsRealmCollection().CollectionChanged += PriceRanges_CollectionChanged;
         }
 
         public Stock(Guid id)
         {
             Id = id;
-            Dividends.CollectionChanged += Dividends_CollectionChanged;
-            Transactions.CollectionChanged += Transactions_CollectionChanged;
+            Dividends.AsRealmCollection().CollectionChanged += Dividends_CollectionChanged;
+            Transactions.AsRealmCollection().CollectionChanged += Transactions_CollectionChanged;
+            PriceRanges.AsRealmCollection().CollectionChanged += PriceRanges_CollectionChanged;
         }
         #endregion
 
         #region Destructor
         ~Stock()
         {
-            Dividends.CollectionChanged -= Dividends_CollectionChanged;
-            Transactions.CollectionChanged -= Transactions_CollectionChanged;
+            Dividends.AsRealmCollection().CollectionChanged -= Dividends_CollectionChanged;
+            Transactions.AsRealmCollection().CollectionChanged -= Transactions_CollectionChanged;
+            PriceRanges.AsRealmCollection().CollectionChanged -= PriceRanges_CollectionChanged;
         }
         #endregion
 
@@ -238,6 +283,11 @@ namespace AndreasReitberger.Stocks.Realm
             Refresh();
             NotifyListeners();
         }
+
+        void PriceRanges_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            OnPriceRangesChanged();
+        }
         #endregion
 
         #region Methods
@@ -265,7 +315,7 @@ namespace AndreasReitberger.Stocks.Realm
 
         void UpdateOpenClosePrices()
         {
-            var priceRange = PriceRanges?.LastOrDefault();
+            StockPriceRange? priceRange = PriceRanges?.LastOrDefault();
             PriceClose = priceRange?.Close ?? CurrentRate;
             PriceOpen = priceRange?.Open ?? CurrentRate;
             // Change since the laste open

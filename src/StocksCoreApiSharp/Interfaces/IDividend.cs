@@ -8,7 +8,7 @@
 
         Guid StockId { get; set; }
 
-        DateTime? DateOfDividend { get; set; }
+        DateTimeOffset? DateOfDividend { get; set; }
 
         double Quantity { get; set; }
 

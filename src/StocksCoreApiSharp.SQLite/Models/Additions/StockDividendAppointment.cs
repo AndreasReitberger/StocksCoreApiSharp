@@ -26,10 +26,10 @@ namespace AndreasReitberger.Stocks.SQLite.Additions
         string? name;
 
         [ObservableProperty]
-        DateTime from;
+        DateTimeOffset from;
 
         [ObservableProperty]
-        DateTime to;
+        DateTimeOffset to;
 
         [ObservableProperty]
         bool isAllDay;
@@ -64,7 +64,7 @@ namespace AndreasReitberger.Stocks.SQLite.Additions
 
         [ObservableProperty]
         [property: OneToMany]
-        ObservableCollection<DateTime>? recurrenceExceptions = new();
+        ObservableCollection<DateTimeOffset>? recurrenceExceptions = new();
 
         #endregion
 

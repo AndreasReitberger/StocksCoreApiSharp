@@ -4,7 +4,7 @@ using AndreasReitberger.Stocks.SQLite.Additions;
 using AndreasReitberger.Stocks.SQLite.Utilities;
 using Newtonsoft.Json;
 
-namespace StocksCoreApiSharp.Test
+namespace StocksCoreApiSharp.Test.SQLite
 {
     public class Tests
     {

@@ -1,31 +1,24 @@
 ﻿using AndreasReitberger.Stocks.Interfaces;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 
 namespace AndreasReitberger.Stocks.Realm
 {
-    public partial class Dividend : ObservableObject, IDividend
+    public partial class Dividend : RealmObject, IDividend
     {
         #region Properties
-        [ObservableProperty]
-        [property: PrimaryKey]
-        Guid id = Guid.Empty;
+        [PrimaryKey]
+        public Guid Id { get; set; } = Guid.Empty;
 
-        [ObservableProperty]
         //[property: ForeignKey(typeof(Stock))]
-        Guid stockId;
+        public Guid StockId { get; set; }
 
-        [ObservableProperty]
-        DateTime? dateOfDividend;
+        public DateTimeOffset? DateOfDividend { get; set; }
 
-        [ObservableProperty]
-        double quantity = 0;
+        public double Quantity { get; set; } = 0;
 
-        [ObservableProperty]
-        double amountOfDividend = 0;
+        public double AmountOfDividend { get; set; } = 0;
 
-        [ObservableProperty]
-        double tax = 0;
+        public double Tax { get; set; } = 0;
 
         public double Total => AmountOfDividend - Tax;
         public double TaxPercentage => Tax / (AmountOfDividend / 100);

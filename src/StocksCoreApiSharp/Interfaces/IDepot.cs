@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-
-namespace AndreasReitberger.Stocks.Interfaces
+﻿namespace AndreasReitberger.Stocks.Interfaces
 {
     public interface IDepot
     {
@@ -13,9 +11,9 @@ namespace AndreasReitberger.Stocks.Interfaces
         bool IsPrimaryDepot { get; set; }
 
         bool ConsiderDividendsForGrowthCalculation { get; set; }
-        DateTime? LastRefresh { get; set; }
+        DateTimeOffset? LastRefresh { get; set; }
 
-        DateTime? DateOfCreation { get; set; }
+        DateTimeOffset? DateOfCreation { get; set; }
 
         double TotalWorth { get; set; }
 

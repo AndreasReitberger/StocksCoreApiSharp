@@ -20,7 +20,7 @@ namespace AndreasReitberger.Stocks.SQLite
         Guid stockId;
 
         [ObservableProperty]
-        DateTime? dateOfDividend;
+        DateTimeOffset? dateOfDividend;
 
         [ObservableProperty]
         double quantity = 0;

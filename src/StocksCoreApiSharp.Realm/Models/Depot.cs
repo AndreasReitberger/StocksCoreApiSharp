@@ -1,115 +1,143 @@
 ﻿using AndreasReitberger.Stocks.Interfaces;
 using AndreasReitberger.Stocks.Models.Events;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.Stocks.Realm
 {
-    public partial class Depot : RealmObjectBase, ObservableObject, IDepot
+    public partial class Depot : RealmObject, IDepot
     {
         #region Properties
+        
+        [PrimaryKey]
+        public Guid Id { get; set; } = Guid.Empty;
 
-        [ObservableProperty]
-        [property: PrimaryKey]
-        Guid id = Guid.Empty;
+        [Required]
+        public string Name { get; set; }
 
-        [ObservableProperty]
-        string name = "";
+        public bool IsPrimaryDepot { get; set; } = false;
 
-        [ObservableProperty]
-        bool isPrimaryDepot = false;
-
-        [ObservableProperty]
-        bool considerDividendsForGrowthCalculation = true;
-        partial void OnConsiderDividendsForGrowthCalculationChanged(bool value)
+        // https://www.mongodb.com/docs/realm/sdk/dotnet/model-data/define-object-model/
+        bool considerDividendsForGrowthCalculation { get; set; } = false;
+        public bool ConsiderDividendsForGrowthCalculation
+        {
+            get => considerDividendsForGrowthCalculation;
+            set
+            {
+                considerDividendsForGrowthCalculation = value;
+                OnConsiderDividendsForGrowthCalculationChanged(value);
+            }
+        }
+        void OnConsiderDividendsForGrowthCalculationChanged(bool value)
         {
             // Do stuff (including calling other methods if needed)
             UpdateStocks();
             NotifyListeners();
         }
 
-        [ObservableProperty]
-        DateTime? lastRefresh;
+        public DateTimeOffset? LastRefresh { get; set; }
 
-        [ObservableProperty]
-        DateTime? dateOfCreation = null;
+        public DateTimeOffset? DateOfCreation { get; set; } = null;
 
-        [ObservableProperty]
-        double totalWorth = 0;
-        partial void OnTotalWorthChanged(double value)
+        double totalWorth { get; set; } = 0;
+        public double TotalWorth
+        {
+            get => totalWorth;
+            set
+            {
+                totalWorth = value;
+                OnTotalWorthChanged(value);
+            }
+        }
+        void OnTotalWorthChanged(double value)
         {
             // Do stuff (including calling other methods if needed)
             CostGrowthRatio = TotalWorth / (TotalCosts / 100);
             NotifyListeners();
         }
-
-        [ObservableProperty]
-        double totalCosts = 0;
-        partial void OnTotalCostsChanged(double value)
+        
+        double totalCosts { get; set; } = 0;
+        public double TotalCosts
+        {
+            get => totalCosts;
+            set
+            {
+                totalCosts = value;
+                OnTotalCostsChanged(value);
+            }
+        }
+        void OnTotalCostsChanged(double value)
         {
             // Do stuff (including calling other methods if needed)
             CostGrowthRatio = TotalWorth / (TotalCosts / 100);
             NotifyListeners();
         }
-
-        [ObservableProperty]
-        double costGrowthRatio = 0;
-        partial void OnCostGrowthRatioChanged(double value)
+        
+        double costGrowthRatio { get; set; } = 0;
+        public double CostGrowthRatio
+        {
+            get => costGrowthRatio;
+            set
+            {
+                costGrowthRatio = value;
+                OnCostGrowthRatioChanged(value);
+            }
+        }
+        void OnCostGrowthRatioChanged(double value)
         {
             // Do stuff (including calling other methods if needed)
             Growth = TotalWorth - TotalCosts;
             NotifyListeners();
         }
-
-        [ObservableProperty]
-        double growth = 0;
-
+     
+        public double Growth { get; set; } = 0;
 
         [Ignored]
         public bool PositiveGrowth => TotalCosts <= TotalWorth;
 
+        [Ignored]
         public ObservableCollection<Dividend> OverallDividends => new(Stocks.SelectMany(stock => stock.Dividends));
         #endregion
 
         #region Collections
-        [ObservableProperty]
+        
         //[property: ManyToMany(typeof(StockDepotRelation))]
-        ObservableCollection<Stock> stocks = new();
+        //ObservableCollection<Stock> Stocks { get; set; } = new();
+        public IList<Stock> Stocks { get; }
         #endregion
 
         #region Constructor
         public Depot()
         {
             Id = Guid.NewGuid();
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public Depot(string name)
         {
             Id = Guid.NewGuid();
             Name = name;
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public Depot(Guid id)
         {
             Id = id;
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public Depot(Guid id, string name)
         {
             Id = id;
             Name = name;
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
         #endregion
 
         #region Destructor
         ~Depot()
         {
-            Stocks.CollectionChanged -= Stocks_CollectionChanged;
+            Stocks.AsRealmCollection().CollectionChanged -= Stocks_CollectionChanged;
         }
         #endregion
 

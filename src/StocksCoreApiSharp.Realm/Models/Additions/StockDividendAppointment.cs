@@ -1,66 +1,50 @@
 ﻿
 using AndreasReitberger.Stocks.Interfaces;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
-using System.Collections.ObjectModel;
 using System.Drawing;
 
 namespace AndreasReitberger.Stocks.Realm.Additions
 {
-    public partial class StockDividendAppointment : ObservableObject, IStockDividendAppointment
+    public partial class StockDividendAppointment : RealmObject, IStockDividendAppointment
     {
         #region  Properties
-        [ObservableProperty]
-        [property: PrimaryKey]
-        Guid id;
+        [PrimaryKey]
+        public Guid Id { get; set; }
 
-        [ObservableProperty]
         //[property: ForeignKey(typeof(Stock))]
-        Guid stockId;
+        public Guid StockId { get; set; }
 
-        [ObservableProperty]
-        string? name;
+        public string? Name { get; set; }
 
-        [ObservableProperty]
-        DateTime from;
+        public DateTimeOffset From { get; set; }
 
-        [ObservableProperty]
-        DateTime to;
+        public DateTimeOffset To { get; set; }
 
-        [ObservableProperty]
-        bool isAllDay;
+        public bool IsAllDay { get; set; }
 
-        [ObservableProperty]
-        string? notes;
+        public string? Notes { get; set; }
 
-        [ObservableProperty]
-        [property: Ignored]
-        TimeZoneInfo? startTimeZone;
+        [Ignored]
+        public TimeZoneInfo? StartTimeZone { get; set; }
 
-        [ObservableProperty]
-        [property: Ignored]
-        TimeZoneInfo? endTimeZone;
+        [Ignored]
+        public TimeZoneInfo? EndTimeZone { get; set; }
 
-        [ObservableProperty]
-        [property: Ignored]
-        Color background;
+        [Ignored]
+        public Color Background { get; set; }
 
-        [ObservableProperty]
-        string? backgroundColorCode;
+        public string? BackgroundColorCode { get; set; }
 
-        [ObservableProperty]
-        Guid? recurrenceId;
+        public Guid? RecurrenceId { get; set; }
 
-        [ObservableProperty]
-        string? recurrenceRule;
+        public string? RecurrenceRule { get; set; }
 
         #endregion
 
         #region Collections
 
-        [ObservableProperty]
         //[property: OneToMany]
-        ObservableCollection<DateTime>? recurrenceExceptions = new();
+        public IList<DateTimeOffset>? RecurrenceExceptions { get; }
 
         #endregion
 

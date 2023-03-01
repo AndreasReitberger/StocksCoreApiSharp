@@ -26,10 +26,10 @@ namespace AndreasReitberger.Stocks.SQLite
         bool isOpen = false;
 
         [ObservableProperty]
-        DateTime? lastRefresh;
+        DateTimeOffset? lastRefresh;
 
         [ObservableProperty]
-        DateTime? dateOfCreation = null;
+        DateTimeOffset? dateOfCreation = null;
 
         #endregion
 
