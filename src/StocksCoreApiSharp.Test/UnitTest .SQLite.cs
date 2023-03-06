@@ -237,9 +237,10 @@ namespace StocksCoreApiSharp.Test.SQLite
                     await DatabaseHandler.Instance.SetStocksWithChildrenAsync(myDepot.Stocks.ToList(), true);
                     await DatabaseHandler.Instance.SetDepotWithChildrenAsync(myDepot);
 
+                    await Task.Delay(20);
                     Depot? dbDepot = await DatabaseHandler.Instance.GetDepotWithChildrenAsync(myDepot.Id);
                     Assert.IsNotNull(dbDepot);
-                    Assert.IsTrue(dbDepot?.Stocks.First().PriceRanges.Count == 2);
+                    Assert.IsTrue(dbDepot?.Stocks.First(stock => stock.Name == "BASF").PriceRanges.Count == 2);
 
                     string jsonOriginal = JsonConvert.SerializeObject(myDepot, Formatting.Indented);
                     string jsonDatabase = JsonConvert.SerializeObject(dbDepot, Formatting.Indented);

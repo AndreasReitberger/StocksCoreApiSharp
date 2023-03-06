@@ -98,34 +98,34 @@ namespace AndreasReitberger.Stocks.Realm
         public WatchList()
         {
             Id = Guid.NewGuid();
-            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public WatchList(string name)
         {
             Id = Guid.NewGuid();
             Name = name;
-            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public WatchList(Guid id)
         {
             Id = id;
-            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public WatchList(Guid id, string name)
         {
             Id = id;
             Name = name;
-            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
         #endregion
 
         #region Destructor
         ~WatchList()
         {
-            Stocks.AsRealmCollection().CollectionChanged -= Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged -= Stocks_CollectionChanged;
         }
         #endregion
 
@@ -195,7 +195,11 @@ namespace AndreasReitberger.Stocks.Realm
         #endregion
 
         #region Overrides
-
+        protected override void OnManaged()
+        {
+            base.OnManaged();
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
+        }
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);

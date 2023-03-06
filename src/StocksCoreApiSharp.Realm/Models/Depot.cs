@@ -100,7 +100,7 @@ namespace AndreasReitberger.Stocks.Realm
         #endregion
 
         #region Collections
-        
+
         //[property: ManyToMany(typeof(StockDepotRelation))]
         //ObservableCollection<Stock> Stocks { get; set; } = new();
         public IList<Stock> Stocks { get; }
@@ -110,34 +110,34 @@ namespace AndreasReitberger.Stocks.Realm
         public Depot()
         {
             Id = Guid.NewGuid();
-            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public Depot(string name)
         {
             Id = Guid.NewGuid();
             Name = name;
-            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public Depot(Guid id)
         {
             Id = id;
-            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public Depot(Guid id, string name)
         {
             Id = id;
             Name = name;
-            Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
         #endregion
 
         #region Destructor
         ~Depot()
         {
-            Stocks.AsRealmCollection().CollectionChanged -= Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged -= Stocks_CollectionChanged;
         }
         #endregion
 
@@ -219,7 +219,11 @@ namespace AndreasReitberger.Stocks.Realm
         #endregion
 
         #region Overrides
-
+        protected override void OnManaged()
+        {
+            base.OnManaged();
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
+        }
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);

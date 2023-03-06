@@ -1,6 +1,7 @@
 using AndreasReitberger.Stocks.Enums;
 using AndreasReitberger.Stocks.Realm;
 using AndreasReitberger.Stocks.Realm.Additions;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollection;
 using Newtonsoft.Json;
 using Realms;
 using Transaction = AndreasReitberger.Stocks.Realm.Transaction;
@@ -118,13 +119,13 @@ namespace StocksCoreApiSharp.Test.Realms
             try
             {
                 string databasePath = "testdatabase.realm";
-                // Start with a clear database
-                if (File.Exists(databasePath))
-                {
-                    File.Delete(databasePath);
-                }
                 // https://www.mongodb.com/docs/realm/sdk/dotnet/quick-start/
                 var config = new RealmConfiguration(databasePath);
+                // Start with a clear database
+                if (File.Exists(config.DatabasePath))
+                {
+                    File.Delete(config.DatabasePath);
+                }
                 using var realm = await Realm.GetInstanceAsync(config);
                 if (!realm.IsClosed)
                 {
@@ -237,7 +238,7 @@ namespace StocksCoreApiSharp.Test.Realms
                     var overallDividends = myDepot.OverallDividends;
 
                     //realm.Add(myDepot.Stocks);
-                    realm.Add(myDepot);
+                    realm.Write(() => realm.Add(myDepot));
 
                     Depot? dbDepot = realm.Find<Depot>(myDepot.Id);
                     Assert.IsNotNull(dbDepot);
@@ -252,25 +253,23 @@ namespace StocksCoreApiSharp.Test.Realms
                     {
                         DateOfCreation = DateTime.Now,
                     };
-                    basf.WatchListId = watchList.Id;
+                    realm.Write(() => basf.WatchListId = watchList.Id);
                     watchList.Stocks.Add(basf);
 
-                    daimler.WatchListId = watchList.Id;
+                    realm.Write(() => daimler.WatchListId = watchList.Id);
                     watchList.Stocks.Add(daimler);
 
-                    realm.Add(watchList.Stocks);
-                    realm.Add(watchList);
+                    //realm.Add(watchList.Stocks);
+                    realm.Write(() => realm.Add(watchList));
 
                     List<WatchList>? loadedWatchLists = realm.All<WatchList>()?.ToList();
 
-                    await Task.Delay(20);
                     Assert.IsTrue(loadedWatchLists?.Count > 0, "Watchlist.Count was 0 or null");
                     WatchList list = loadedWatchLists?.FirstOrDefault(l => l.Id == watchList.Id);
                     Assert.IsNotNull(list);
                     Assert.IsTrue(list.Stocks?.Count == 2, "Stocks.Count was not 2");
 
                     // Check if the updating works
-                    await Task.Delay(20);
                     var stocks = realm.All<Stock>()?.ToList();
                     Assert.IsTrue(stocks?.Count == 2, "Stocks.Count was not 2 after loading from database");
                 }
@@ -312,8 +311,9 @@ namespace StocksCoreApiSharp.Test.Realms
                 Price = 104.10,
                 Type = TransactionType.Sell,
             });
-
+            basf.Refresh();
             myDepot.Stocks.Add(basf);
+            myDepot.Refresh();
 
             double cost = basf.TotalCosts;
             Assert.IsTrue(cost >= 0);
@@ -348,6 +348,8 @@ namespace StocksCoreApiSharp.Test.Realms
                 Price = 64.10,
                 Type = TransactionType.Sell,
             });
+            basf.Refresh();
+            myDepot.Refresh();
             cost = basf.TotalCosts;
             Assert.IsTrue(cost >= 0);
             worth = basf.CurrentWorth;
@@ -383,6 +385,7 @@ namespace StocksCoreApiSharp.Test.Realms
                 Price = 98.10,
                 Type = TransactionType.Sell,
             });
+            basf.Refresh();
             cost = basf.TotalCosts;
             Assert.IsTrue(cost >= 0);
             worth = basf.CurrentWorth;

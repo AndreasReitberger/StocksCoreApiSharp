@@ -222,26 +222,26 @@ namespace AndreasReitberger.Stocks.Realm
         public Stock()
         {
             Id = Guid.NewGuid();
-            Dividends.AsRealmCollection().CollectionChanged += Dividends_CollectionChanged;
-            Transactions.AsRealmCollection().CollectionChanged += Transactions_CollectionChanged;
-            PriceRanges.AsRealmCollection().CollectionChanged += PriceRanges_CollectionChanged;
+            //Dividends.AsRealmCollection().CollectionChanged += Dividends_CollectionChanged;
+            //Transactions.AsRealmCollection().CollectionChanged += Transactions_CollectionChanged;
+            //PriceRanges.AsRealmCollection().CollectionChanged += PriceRanges_CollectionChanged;
         }
 
         public Stock(Guid id)
         {
             Id = id;
-            Dividends.AsRealmCollection().CollectionChanged += Dividends_CollectionChanged;
-            Transactions.AsRealmCollection().CollectionChanged += Transactions_CollectionChanged;
-            PriceRanges.AsRealmCollection().CollectionChanged += PriceRanges_CollectionChanged;
+            //Dividends.AsRealmCollection().CollectionChanged += Dividends_CollectionChanged;
+            //Transactions.AsRealmCollection().CollectionChanged += Transactions_CollectionChanged;
+            //PriceRanges.AsRealmCollection().CollectionChanged += PriceRanges_CollectionChanged;
         }
         #endregion
 
         #region Destructor
         ~Stock()
         {
-            Dividends.AsRealmCollection().CollectionChanged -= Dividends_CollectionChanged;
-            Transactions.AsRealmCollection().CollectionChanged -= Transactions_CollectionChanged;
-            PriceRanges.AsRealmCollection().CollectionChanged -= PriceRanges_CollectionChanged;
+            //Dividends.AsRealmCollection().CollectionChanged -= Dividends_CollectionChanged;
+            //Transactions.AsRealmCollection().CollectionChanged -= Transactions_CollectionChanged;
+            //PriceRanges.AsRealmCollection().CollectionChanged -= PriceRanges_CollectionChanged;
         }
         #endregion
 
@@ -412,7 +412,15 @@ namespace AndreasReitberger.Stocks.Realm
         #endregion
 
         #region Overrides
-
+        protected override void OnManaged()
+        {
+            base.OnManaged();
+            /*
+            Dividends.AsRealmCollection().CollectionChanged += Dividends_CollectionChanged;
+            Transactions.AsRealmCollection().CollectionChanged += Transactions_CollectionChanged;
+            PriceRanges.AsRealmCollection().CollectionChanged += PriceRanges_CollectionChanged;
+            */
+        }
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);
