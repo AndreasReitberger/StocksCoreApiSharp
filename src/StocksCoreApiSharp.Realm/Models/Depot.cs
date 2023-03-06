@@ -8,7 +8,7 @@ namespace AndreasReitberger.Stocks.Realm
     public partial class Depot : RealmObject, IDepot
     {
         #region Properties
-        
+
         [PrimaryKey]
         public Guid Id { get; set; } = Guid.Empty;
 
@@ -55,7 +55,7 @@ namespace AndreasReitberger.Stocks.Realm
             CostGrowthRatio = TotalWorth / (TotalCosts / 100);
             NotifyListeners();
         }
-        
+
         double totalCosts { get; set; } = 0;
         public double TotalCosts
         {
@@ -72,7 +72,7 @@ namespace AndreasReitberger.Stocks.Realm
             CostGrowthRatio = TotalWorth / (TotalCosts / 100);
             NotifyListeners();
         }
-        
+
         double costGrowthRatio { get; set; } = 0;
         public double CostGrowthRatio
         {
@@ -89,7 +89,7 @@ namespace AndreasReitberger.Stocks.Realm
             Growth = TotalWorth - TotalCosts;
             NotifyListeners();
         }
-     
+
         public double Growth { get; set; } = 0;
 
         [Ignored]

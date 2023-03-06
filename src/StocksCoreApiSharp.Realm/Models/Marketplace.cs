@@ -23,7 +23,7 @@ namespace AndreasReitberger.Stocks.Realm
 
         #region Collections
         //[property: ManyToMany(typeof(StockMarketplaceRelation))]
-        public IList<Stock> Stocks { get; } 
+        public IList<Stock> Stocks { get; }
 
         #endregion
 

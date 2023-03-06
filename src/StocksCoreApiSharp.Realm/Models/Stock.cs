@@ -215,7 +215,7 @@ namespace AndreasReitberger.Stocks.Realm
         public IList<StockPriceRange> PriceRanges { get; }
         //ObservableCollection<IStockPriceRange> priceRanges = new();
         void OnPriceRangesChanged() => UpdateOpenClosePrices();
-        
+
         #endregion
 
         #region Constructor
