@@ -1,7 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.ObjectModel;
-
-namespace AndreasReitberger.Stocks.Interfaces
+﻿namespace AndreasReitberger.Stocks.Interfaces
 {
     public interface IWatchList
     {
@@ -12,9 +9,9 @@ namespace AndreasReitberger.Stocks.Interfaces
 
         bool IsPrimaryWatchList { get; set; }
 
-        DateTime? LastRefresh { get; set; }
+        DateTimeOffset? LastRefresh { get; set; }
 
-        DateTime? DateOfCreation { get; set; }
+        DateTimeOffset? DateOfCreation { get; set; }
 
         #endregion
 

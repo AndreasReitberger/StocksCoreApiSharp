@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<Import Project="..\..\common.props" />
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+	  <RootNamespace>AndreasReitberger.Stocks.Realm</RootNamespace>
+	  <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	  <Title>StocksCoreApiSharp.Realm</Title>
+	  <Description>An extension for the StocksCoreApiSharp library which enables SQLite support.</Description>
+
+	  <RepositoryType>git</RepositoryType>
+	  <PackageTags>stocks, core, sharp, depot, dividend, api, app, sql, realm</PackageTags>
+	  <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+	  <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
+	<PackageReference Include="Realm.SourceGenerator" Version="10.20.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="Realm" Version="10.20.0" />
+    <PackageReference Include="Realm.Fody" Version="10.20.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StocksCoreApiSharp\StocksCoreApiSharp.csproj" />
+  </ItemGroup>
+
+</Project>

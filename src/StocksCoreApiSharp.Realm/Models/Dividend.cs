@@ -1,35 +1,24 @@
 ﻿using AndreasReitberger.Stocks.Interfaces;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
-using SQLite;
-using SQLiteNetExtensions.Attributes;
 
-namespace AndreasReitberger.Stocks.SQLite
+namespace AndreasReitberger.Stocks.Realm
 {
-
-    [Table(nameof(Dividend) + "s")]
-    public partial class Dividend : ObservableObject, IDividend
+    public partial class Dividend : RealmObject, IDividend
     {
         #region Properties
-        [ObservableProperty]
-        [property: PrimaryKey]
-        Guid id = Guid.Empty;
+        [PrimaryKey]
+        public Guid Id { get; set; } = Guid.Empty;
 
-        [ObservableProperty]
-        [property: ForeignKey(typeof(Stock))]
-        Guid stockId;
+        //[property: ForeignKey(typeof(Stock))]
+        public Guid StockId { get; set; }
 
-        [ObservableProperty]
-        DateTimeOffset? dateOfDividend;
+        public DateTimeOffset? DateOfDividend { get; set; }
 
-        [ObservableProperty]
-        double quantity = 0;
+        public double Quantity { get; set; } = 0;
 
-        [ObservableProperty]
-        double amountOfDividend = 0;
+        public double AmountOfDividend { get; set; } = 0;
 
-        [ObservableProperty]
-        double tax = 0;
+        public double Tax { get; set; } = 0;
 
         public double Total => AmountOfDividend - Tax;
         public double TaxPercentage => Tax / (AmountOfDividend / 100);

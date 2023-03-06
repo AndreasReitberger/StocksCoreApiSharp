@@ -14,9 +14,9 @@ namespace AndreasReitberger.Stocks.Interfaces
 
         string? Name { get; set; }
 
-        DateTime From { get; set; }
+        DateTimeOffset From { get; set; }
 
-        DateTime To { get; set; }
+        DateTimeOffset To { get; set; }
 
         bool IsAllDay { get; set; }
 
@@ -38,7 +38,7 @@ namespace AndreasReitberger.Stocks.Interfaces
 
         #region Collections
 
-        ObservableCollection<DateTime>? RecurrenceExceptions { get; set; }
+        //ObservableCollection<DateTime>? RecurrenceExceptions { get; set; }
         #endregion
     }
 }

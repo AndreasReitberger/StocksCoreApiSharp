@@ -1,42 +1,29 @@
 ﻿using AndreasReitberger.Stocks.Interfaces;
 using AndreasReitberger.Stocks.Models.Events;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
-using SQLite;
-using SQLiteNetExtensions.Attributes;
-using System.Collections.ObjectModel;
-using AndreasReitberger.Stocks.SQLite.Database;
 
-namespace AndreasReitberger.Stocks.SQLite
+namespace AndreasReitberger.Stocks.Realm
 {
-
-    [Table(nameof(Marketplace) + "s")]
-    public partial class Marketplace : ObservableObject, IMarketplace
+    public partial class Marketplace : RealmObject, IMarketplace
     {
         #region Properties
 
-        [ObservableProperty]
-        [property: PrimaryKey]
-        Guid id = Guid.Empty;
+        [PrimaryKey]
+        public Guid Id { get; set; } = Guid.Empty;
 
-        [ObservableProperty]
-        string name = "";
+        public string Name { get; set; } = "";
 
-        [ObservableProperty]
-        bool isOpen = false;
+        public bool IsOpen { get; set; } = false;
 
-        [ObservableProperty]
-        DateTimeOffset? lastRefresh;
+        public DateTimeOffset? LastRefresh { get; set; }
 
-        [ObservableProperty]
-        DateTimeOffset? dateOfCreation = null;
+        public DateTimeOffset? DateOfCreation { get; set; } = null;
 
         #endregion
 
         #region Collections
-        [ObservableProperty]
-        [property: ManyToMany(typeof(StockMarketplaceRelation))]
-        ObservableCollection<Stock> stocks = new();
+        //[property: ManyToMany(typeof(StockMarketplaceRelation))]
+        public IList<Stock> Stocks { get; } 
 
         #endregion
 
@@ -44,34 +31,34 @@ namespace AndreasReitberger.Stocks.SQLite
         public Marketplace()
         {
             Id = Guid.NewGuid();
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public Marketplace(string name)
         {
             Id = Guid.NewGuid();
             Name = name;
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public Marketplace(Guid id)
         {
             Id = id;
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public Marketplace(Guid id, string name)
         {
             Id = id;
             Name = name;
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
         #endregion
 
         #region Destructor
         ~Marketplace()
         {
-            Stocks.CollectionChanged -= Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged -= Stocks_CollectionChanged;
         }
         #endregion
 
@@ -81,7 +68,11 @@ namespace AndreasReitberger.Stocks.SQLite
         {
             Error?.Invoke(this, EventArgs.Empty);
         }
-        protected virtual void OnError(ErrorEventArgs e)
+        protected virtual void OnError(System.IO.ErrorEventArgs e)
+        {
+            Error?.Invoke(this, e);
+        }
+        protected virtual void OnError(Realms.ErrorEventArgs e)
         {
             Error?.Invoke(this, e);
         }
@@ -138,7 +129,11 @@ namespace AndreasReitberger.Stocks.SQLite
         #endregion
 
         #region Overrides
-
+        protected override void OnManaged()
+        {
+            base.OnManaged();
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
+        }
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);

@@ -1,10 +1,12 @@
 using AndreasReitberger.Stocks.Enums;
-using AndreasReitberger.Stocks.SQLite;
-using AndreasReitberger.Stocks.SQLite.Additions;
-using AndreasReitberger.Stocks.SQLite.Utilities;
+using AndreasReitberger.Stocks.Realm;
+using AndreasReitberger.Stocks.Realm.Additions;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.DataCollection;
 using Newtonsoft.Json;
+using Realms;
+using Transaction = AndreasReitberger.Stocks.Realm.Transaction;
 
-namespace StocksCoreApiSharp.Test
+namespace StocksCoreApiSharp.Test.Realms
 {
     public class Tests
     {
@@ -116,16 +118,17 @@ namespace StocksCoreApiSharp.Test
         {
             try
             {
-                string databasePath = "testdatabase.db";
+                string databasePath = "testdatabase.realm";
+                // https://www.mongodb.com/docs/realm/sdk/dotnet/quick-start/
+                var config = new RealmConfiguration(databasePath);
                 // Start with a clear database
-                if (File.Exists(databasePath))
+                if (File.Exists(config.DatabasePath))
                 {
-                    File.Delete(databasePath);
+                    File.Delete(config.DatabasePath);
                 }
-                DatabaseHandler.Instance = new DatabaseHandler(databasePath);
-                if (DatabaseHandler.Instance.IsInitialized)
+                using var realm = await Realm.GetInstanceAsync(config);
+                if (!realm.IsClosed)
                 {
-                    await DatabaseHandler.Instance.InitTablesAsync();
                     Depot myDepot = new("My depot")
                     {
                         DateOfCreation = DateTime.Now,
@@ -234,10 +237,10 @@ namespace StocksCoreApiSharp.Test
                     var totalDepotWorth = myDepot.TotalWorth;
                     var overallDividends = myDepot.OverallDividends;
 
-                    await DatabaseHandler.Instance.SetStocksWithChildrenAsync(myDepot.Stocks.ToList(), true);
-                    await DatabaseHandler.Instance.SetDepotWithChildrenAsync(myDepot);
+                    //realm.Add(myDepot.Stocks);
+                    realm.Write(() => realm.Add(myDepot));
 
-                    Depot? dbDepot = await DatabaseHandler.Instance.GetDepotWithChildrenAsync(myDepot.Id);
+                    Depot? dbDepot = realm.Find<Depot>(myDepot.Id);
                     Assert.IsNotNull(dbDepot);
                     Assert.IsTrue(dbDepot?.Stocks.First().PriceRanges.Count == 2);
 
@@ -250,28 +253,25 @@ namespace StocksCoreApiSharp.Test
                     {
                         DateOfCreation = DateTime.Now,
                     };
-                    basf.WatchListId = watchList.Id;
+                    realm.Write(() => basf.WatchListId = watchList.Id);
                     watchList.Stocks.Add(basf);
 
-                    daimler.WatchListId = watchList.Id;
+                    realm.Write(() => daimler.WatchListId = watchList.Id);
                     watchList.Stocks.Add(daimler);
 
-                    await DatabaseHandler.Instance.SetStocksWithChildrenAsync(watchList.Stocks.ToList(), true);
-                    await DatabaseHandler.Instance.SetWatchListWithChildrenAsync(watchList);
-                    var loadedWatchLists = await DatabaseHandler.Instance.GetWatchListsWithChildrenAsync();
+                    //realm.Add(watchList.Stocks);
+                    realm.Write(() => realm.Add(watchList));
 
-                    await Task.Delay(20);
+                    List<WatchList>? loadedWatchLists = realm.All<WatchList>()?.ToList();
+
                     Assert.IsTrue(loadedWatchLists?.Count > 0, "Watchlist.Count was 0 or null");
                     WatchList list = loadedWatchLists?.FirstOrDefault(l => l.Id == watchList.Id);
                     Assert.IsNotNull(list);
                     Assert.IsTrue(list.Stocks?.Count == 2, "Stocks.Count was not 2");
 
                     // Check if the updating works
-                    await Task.Delay(20);
-                    var stocks = await DatabaseHandler.Instance.GetStocksWithChildrenAsync();
+                    var stocks = realm.All<Stock>()?.ToList();
                     Assert.IsTrue(stocks?.Count == 2, "Stocks.Count was not 2 after loading from database");
-
-                    await DatabaseHandler.Instance.CloseDatabaseAsync();
                 }
             }
             catch (Exception exc)
@@ -311,8 +311,9 @@ namespace StocksCoreApiSharp.Test
                 Price = 104.10,
                 Type = TransactionType.Sell,
             });
-
+            basf.Refresh();
             myDepot.Stocks.Add(basf);
+            myDepot.Refresh();
 
             double cost = basf.TotalCosts;
             Assert.IsTrue(cost >= 0);
@@ -347,6 +348,8 @@ namespace StocksCoreApiSharp.Test
                 Price = 64.10,
                 Type = TransactionType.Sell,
             });
+            basf.Refresh();
+            myDepot.Refresh();
             cost = basf.TotalCosts;
             Assert.IsTrue(cost >= 0);
             worth = basf.CurrentWorth;
@@ -382,6 +385,7 @@ namespace StocksCoreApiSharp.Test
                 Price = 98.10,
                 Type = TransactionType.Sell,
             });
+            basf.Refresh();
             cost = basf.TotalCosts;
             Assert.IsTrue(cost >= 0);
             worth = basf.CurrentWorth;

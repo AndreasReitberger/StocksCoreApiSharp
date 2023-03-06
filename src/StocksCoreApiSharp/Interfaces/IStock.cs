@@ -25,11 +25,11 @@ namespace AndreasReitberger.Stocks.Interfaces
 
         bool IsRerfresing { get; set; }
 
-        DateTime? LastRefresh { get; set; }
+        DateTimeOffset? LastRefresh { get; set; }
 
         double? DividendForecast { get; set; }
 
-        DateTime? DateOfAGM { get; set; }
+        DateTimeOffset? DateOfAGM { get; set; }
 
         string Currency { get; set; }
 

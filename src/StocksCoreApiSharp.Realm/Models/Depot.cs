@@ -1,129 +1,143 @@
 ﻿using AndreasReitberger.Stocks.Interfaces;
 using AndreasReitberger.Stocks.Models.Events;
-using AndreasReitberger.Stocks.SQLite.Database;
-using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
-using SQLite;
-using SQLiteNetExtensions.Attributes;
 using System.Collections.ObjectModel;
 
-namespace AndreasReitberger.Stocks.SQLite
+namespace AndreasReitberger.Stocks.Realm
 {
-
-    [Table(nameof(Depot) + "s")]
-    public partial class Depot : ObservableObject, IDepot
+    public partial class Depot : RealmObject, IDepot
     {
         #region Properties
+        
+        [PrimaryKey]
+        public Guid Id { get; set; } = Guid.Empty;
 
-        [ObservableProperty]
+        [Required]
+        public string Name { get; set; }
 
-        [property: PrimaryKey]
+        public bool IsPrimaryDepot { get; set; } = false;
 
-        Guid id = Guid.Empty;
-
-        [ObservableProperty]
-        string name = "";
-
-        [ObservableProperty]
-        bool isPrimaryDepot = false;
-
-        [ObservableProperty]
-        bool considerDividendsForGrowthCalculation = true;
-        partial void OnConsiderDividendsForGrowthCalculationChanged(bool value)
+        // https://www.mongodb.com/docs/realm/sdk/dotnet/model-data/define-object-model/
+        bool considerDividendsForGrowthCalculation { get; set; } = false;
+        public bool ConsiderDividendsForGrowthCalculation
+        {
+            get => considerDividendsForGrowthCalculation;
+            set
+            {
+                considerDividendsForGrowthCalculation = value;
+                OnConsiderDividendsForGrowthCalculationChanged(value);
+            }
+        }
+        void OnConsiderDividendsForGrowthCalculationChanged(bool value)
         {
             // Do stuff (including calling other methods if needed)
             UpdateStocks();
             NotifyListeners();
         }
 
-        [ObservableProperty]
-        DateTimeOffset? lastRefresh;
+        public DateTimeOffset? LastRefresh { get; set; }
 
-        [ObservableProperty]
-        DateTimeOffset? dateOfCreation = null;
+        public DateTimeOffset? DateOfCreation { get; set; } = null;
 
-        [ObservableProperty]
-        double totalWorth = 0;
-        partial void OnTotalWorthChanged(double value)
+        double totalWorth { get; set; } = 0;
+        public double TotalWorth
+        {
+            get => totalWorth;
+            set
+            {
+                totalWorth = value;
+                OnTotalWorthChanged(value);
+            }
+        }
+        void OnTotalWorthChanged(double value)
         {
             // Do stuff (including calling other methods if needed)
             CostGrowthRatio = TotalWorth / (TotalCosts / 100);
             NotifyListeners();
         }
-
-        [ObservableProperty]
-        double totalCosts = 0;
-        partial void OnTotalCostsChanged(double value)
+        
+        double totalCosts { get; set; } = 0;
+        public double TotalCosts
+        {
+            get => totalCosts;
+            set
+            {
+                totalCosts = value;
+                OnTotalCostsChanged(value);
+            }
+        }
+        void OnTotalCostsChanged(double value)
         {
             // Do stuff (including calling other methods if needed)
             CostGrowthRatio = TotalWorth / (TotalCosts / 100);
             NotifyListeners();
         }
-
-        [ObservableProperty]
-        double costGrowthRatio = 0;
-        partial void OnCostGrowthRatioChanged(double value)
+        
+        double costGrowthRatio { get; set; } = 0;
+        public double CostGrowthRatio
+        {
+            get => costGrowthRatio;
+            set
+            {
+                costGrowthRatio = value;
+                OnCostGrowthRatioChanged(value);
+            }
+        }
+        void OnCostGrowthRatioChanged(double value)
         {
             // Do stuff (including calling other methods if needed)
             Growth = TotalWorth - TotalCosts;
             NotifyListeners();
         }
+     
+        public double Growth { get; set; } = 0;
 
-        [ObservableProperty]
-        double growth = 0;
+        [Ignored]
+        public bool PositiveGrowth => TotalCosts <= TotalWorth;
 
-
-        [Ignore]
-
-        public bool PositiveGrowth
-        {
-            get
-            {
-                return TotalCosts <= TotalWorth;
-            }
-        }
-
+        [Ignored]
         public ObservableCollection<Dividend> OverallDividends => new(Stocks.SelectMany(stock => stock.Dividends));
         #endregion
 
         #region Collections
-        [ObservableProperty]
-        [property: ManyToMany(typeof(StockDepotRelation))]
-        ObservableCollection<Stock> stocks = new();
+
+        //[property: ManyToMany(typeof(StockDepotRelation))]
+        //ObservableCollection<Stock> Stocks { get; set; } = new();
+        public IList<Stock> Stocks { get; }
         #endregion
 
         #region Constructor
         public Depot()
         {
             Id = Guid.NewGuid();
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public Depot(string name)
         {
             Id = Guid.NewGuid();
             Name = name;
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public Depot(Guid id)
         {
             Id = id;
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
 
         public Depot(Guid id, string name)
         {
             Id = id;
             Name = name;
-            Stocks.CollectionChanged += Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
         }
         #endregion
 
         #region Destructor
         ~Depot()
         {
-            Stocks.CollectionChanged -= Stocks_CollectionChanged;
+            //Stocks.AsRealmCollection().CollectionChanged -= Stocks_CollectionChanged;
         }
         #endregion
 
@@ -133,7 +147,7 @@ namespace AndreasReitberger.Stocks.SQLite
         {
             Error?.Invoke(this, EventArgs.Empty);
         }
-        protected virtual void OnError(ErrorEventArgs e)
+        protected virtual void OnError(System.IO.ErrorEventArgs e)
         {
             Error?.Invoke(this, e);
         }
@@ -141,7 +155,10 @@ namespace AndreasReitberger.Stocks.SQLite
         {
             Error?.Invoke(this, e);
         }
-
+        protected virtual void OnError(Realms.ErrorEventArgs e)
+        {
+            Error?.Invoke(this, e);
+        }
         public event EventHandler<DepotChangedEventArgs> DepotChanged;
         protected virtual void OnDepotChanged(DepotChangedEventArgs e)
         {
@@ -202,7 +219,11 @@ namespace AndreasReitberger.Stocks.SQLite
         #endregion
 
         #region Overrides
-
+        protected override void OnManaged()
+        {
+            base.OnManaged();
+            //Stocks.AsRealmCollection().CollectionChanged += Stocks_CollectionChanged;
+        }
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this, Formatting.Indented);

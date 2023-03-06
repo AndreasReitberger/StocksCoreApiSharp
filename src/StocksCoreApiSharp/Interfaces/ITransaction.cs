@@ -9,9 +9,9 @@ namespace AndreasReitberger.Stocks.Interfaces
 
         Guid StockId { get; set; }
 
-        TransactionType? Type { get; set; }
+        TransactionType Type { get; set; }
 
-        DateTime? DateOfCreation { get; set; }
+        DateTimeOffset? DateOfCreation { get; set; }
 
         double Amount { get; set; }
 

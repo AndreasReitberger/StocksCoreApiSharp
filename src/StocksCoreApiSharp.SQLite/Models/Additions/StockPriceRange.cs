@@ -12,19 +12,15 @@ namespace AndreasReitberger.Stocks.SQLite.Additions
     {
         #region Properties
         [ObservableProperty]
-
         [property: PrimaryKey]
-
         Guid id = Guid.Empty;
 
         [ObservableProperty]
-
         [property: ForeignKey(typeof(Depot))]
-
         Guid stockId = Guid.Empty;
 
         [ObservableProperty]
-        DateTime date;
+        DateTimeOffset date;
 
         [ObservableProperty]
         double open;

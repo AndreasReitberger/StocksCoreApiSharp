@@ -7,7 +7,7 @@
 
         Guid StockId { get; set; }
 
-        DateTime Date { get; set; }
+        DateTimeOffset Date { get; set; }
 
         double Open { get; set; }
 

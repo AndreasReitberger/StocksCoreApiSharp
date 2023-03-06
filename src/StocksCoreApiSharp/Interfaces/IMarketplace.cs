@@ -12,9 +12,9 @@ namespace AndreasReitberger.Stocks.Interfaces
 
         bool IsOpen { get; set; }
 
-        DateTime? LastRefresh { get; set; }
+        DateTimeOffset? LastRefresh { get; set; }
 
-        DateTime? DateOfCreation { get; set; }
+        DateTimeOffset? DateOfCreation { get; set; }
 
         #endregion
 
