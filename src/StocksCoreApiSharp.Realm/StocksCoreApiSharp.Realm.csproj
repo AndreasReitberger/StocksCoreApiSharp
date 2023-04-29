@@ -19,7 +19,7 @@
   <ItemGroup>
 	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
 	<PackageReference Include="Realm.SourceGenerator" Version="10.21.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Realm" Version="10.21.1" />
     <PackageReference Include="Realm.Fody" Version="10.20.0">
       <PrivateAssets>all</PrivateAssets>
