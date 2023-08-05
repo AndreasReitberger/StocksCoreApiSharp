@@ -66,7 +66,7 @@ namespace AndreasReitberger.Stocks.Models
         double growth = 0;
 
         public bool PositiveGrowth => TotalCosts <= TotalWorth;
-    
+
         public ObservableCollection<Dividend> OverallDividends => new(Stocks.SelectMany(stock => stock.Dividends));
         #endregion
 
