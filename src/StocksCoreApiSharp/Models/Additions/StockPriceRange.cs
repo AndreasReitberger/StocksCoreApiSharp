@@ -1,11 +1,12 @@
 ﻿
 using AndreasReitberger.Core.Utilities;
+using AndreasReitberger.Stocks.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 namespace AndreasReitberger.Stocks.Models.Additions
 {
     [ObservableObject]
-    public partial class StockPriceRange
+    public partial class StockPriceRange : IStockPriceRange
     {
         #region Properties
         [ObservableProperty]
@@ -15,7 +16,7 @@ namespace AndreasReitberger.Stocks.Models.Additions
         Guid stockId = Guid.Empty;
 
         [ObservableProperty]
-        DateTime date;
+        DateTimeOffset date;
 
         [ObservableProperty]
         double open;

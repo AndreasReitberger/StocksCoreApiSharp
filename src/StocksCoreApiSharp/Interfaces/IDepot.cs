@@ -35,7 +35,8 @@
         #endregion
 
         #region Methods
-        void Refresh();
+        public void Refresh();
+
         #endregion
     }
 }

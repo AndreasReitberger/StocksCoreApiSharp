@@ -2,11 +2,12 @@
 using Newtonsoft.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
+using AndreasReitberger.Stocks.Interfaces;
 
 namespace AndreasReitberger.Stocks.Models
 {
     [ObservableObject]
-    public partial class Depot
+    public partial class Depot : IDepot
     {
         #region Properties
 
@@ -29,10 +30,10 @@ namespace AndreasReitberger.Stocks.Models
         }
 
         [ObservableProperty]
-        DateTime? lastRefresh;
+        DateTimeOffset? lastRefresh;
 
         [ObservableProperty]
-        DateTime? dateOfCreation = null;
+        DateTimeOffset? dateOfCreation = null;
 
         [ObservableProperty]
         double totalWorth = 0;
@@ -64,14 +65,8 @@ namespace AndreasReitberger.Stocks.Models
         [ObservableProperty]
         double growth = 0;
 
-        public bool PositiveGrowth
-        {
-            get
-            {
-                return TotalCosts <= TotalWorth;
-            }
-        }
-
+        public bool PositiveGrowth => TotalCosts <= TotalWorth;
+    
         public ObservableCollection<Dividend> OverallDividends => new(Stocks.SelectMany(stock => stock.Dividends));
         #endregion
 

@@ -1,4 +1,5 @@
 ﻿using AndreasReitberger.Stocks.Enums;
+using AndreasReitberger.Stocks.Interfaces;
 using AndreasReitberger.Stocks.Models.Additions;
 using AndreasReitberger.Stocks.Models.Events;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -7,7 +8,7 @@ using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.Stocks.Models
 {
-    public partial class Stock : ObservableObject
+    public partial class Stock : ObservableObject, IStock
     {
         #region Properties
         [ObservableProperty]
@@ -41,13 +42,13 @@ namespace AndreasReitberger.Stocks.Models
         bool isRerfresing = false;
 
         [ObservableProperty]
-        DateTime? lastRefresh;
+        DateTimeOffset? lastRefresh;
 
         [ObservableProperty]
         double? dividendForecast;
 
         [ObservableProperty]
-        DateTime? dateOfAGM;
+        DateTimeOffset? dateOfAGM;
 
         [ObservableProperty]
         string currency;
@@ -135,13 +136,9 @@ namespace AndreasReitberger.Stocks.Models
             NotifyListeners();
         }
 
-        public bool PositiveGrowth
-        {
-            get
-            {
-                return TotalCosts <= CurrentWorth;
-            }
-        }
+        public bool PositiveGrowth => TotalCosts <= CurrentWorth;
+        public bool CostEarnBreakPointReached => TotalCosts <= TotalDividends;
+
         #endregion
 
         #region Collections

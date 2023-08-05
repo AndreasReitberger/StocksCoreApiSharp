@@ -2,11 +2,12 @@
 using System.Collections.ObjectModel;
 using System.Drawing;
 using CommunityToolkit.Mvvm.ComponentModel;
+using AndreasReitberger.Stocks.Interfaces;
 
 namespace AndreasReitberger.Stocks.Models.Additions
 {
     [ObservableObject]
-    public partial class StockDividendAppointment
+    public partial class StockDividendAppointment: IStockDividendAppointment
     {
         #region  Properties
         [ObservableProperty]
@@ -19,10 +20,10 @@ namespace AndreasReitberger.Stocks.Models.Additions
         string? name;
 
         [ObservableProperty]
-        DateTime from;
+        DateTimeOffset from;
 
         [ObservableProperty]
-        DateTime to;
+        DateTimeOffset to;
 
         [ObservableProperty]
         bool isAllDay;

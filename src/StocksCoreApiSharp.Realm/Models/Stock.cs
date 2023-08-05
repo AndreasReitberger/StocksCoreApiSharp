@@ -199,6 +199,9 @@ namespace AndreasReitberger.Stocks.Realm
         [Ignored]
         public bool PositiveGrowth => TotalCosts <= CurrentWorth;
 
+        [Ignored]
+        public bool CostEarnBreakPointReached => TotalCosts <= TotalDividends;
+
         #endregion
 
         #region Collections

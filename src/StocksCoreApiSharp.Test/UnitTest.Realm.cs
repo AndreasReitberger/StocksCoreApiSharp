@@ -407,5 +407,25 @@ namespace StocksCoreApiSharp.Test.Realms
             };
             watchList.Stocks.Add(basf);
         }
+
+        [Test]
+        public void EarnCostPointReachedTest()
+        {
+            var stock = new Stock()
+            {
+                Name = "Test Stock",
+                CurrentRate = 56.46,
+            };
+            stock.Transactions.Add(new Transaction() { Amount = 100, Price = 40, DateOfCreation = DateTimeOffset.Now, Type = TransactionType.Buy });
+            stock.Dividends.Add(new Dividend() { AmountOfDividend = 2534.12, Quantity = 100, DateOfDividend = DateTimeOffset.Now, Tax = 531.15 });
+            stock.Refresh();
+            Assert.IsFalse(stock.CostEarnBreakPointReached);
+
+            stock.Dividends.Add(new Dividend() { AmountOfDividend = 5534.12, Quantity = 100, DateOfDividend = DateTimeOffset.Now, Tax = 1531.15 });
+            stock.Refresh();
+
+            Assert.IsTrue(stock.CostEarnBreakPointReached);
+        }
     }
+
 }
