@@ -62,6 +62,7 @@ namespace AndreasReitberger.Stocks.Interfaces
         ValueChangedIndicator ChangedIndicator { get; set; }
 
         public bool PositiveGrowth { get; }
+        public bool CostEarnBreakPointReached { get; }
         #endregion
 
         #region Collections

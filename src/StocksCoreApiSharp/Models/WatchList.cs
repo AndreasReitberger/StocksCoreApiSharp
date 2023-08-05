@@ -1,11 +1,12 @@
-﻿using AndreasReitberger.Stocks.Models.Events;
+﻿using AndreasReitberger.Stocks.Interfaces;
+using AndreasReitberger.Stocks.Models.Events;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.Stocks.Models
 {
-    public partial class WatchList : ObservableObject
+    public partial class WatchList : ObservableObject, IWatchList
     {
         #region Properties
 
@@ -31,15 +32,15 @@ namespace AndreasReitberger.Stocks.Models
         }
 
         [ObservableProperty]
-        DateTime? lastRefresh;
-        partial void OnLastRefreshChanged(DateTime? value)
+        DateTimeOffset? lastRefresh;
+        partial void OnLastRefreshChanged(DateTimeOffset? value)
         {
             NotifyListeners();
         }
 
         [ObservableProperty]
-        DateTime? dateOfCreation = null;
-        partial void OnDateOfCreationChanged(DateTime? value)
+        DateTimeOffset? dateOfCreation = null;
+        partial void OnDateOfCreationChanged(DateTimeOffset? value)
         {
             NotifyListeners();
         }

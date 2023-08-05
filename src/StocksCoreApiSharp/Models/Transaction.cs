@@ -1,12 +1,11 @@
-﻿using AndreasReitberger.Core.Utilities;
-using AndreasReitberger.Stocks.Enums;
+﻿using AndreasReitberger.Stocks.Enums;
+using AndreasReitberger.Stocks.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
-using System;
 
 namespace AndreasReitberger.Stocks.Models
 {
-    public partial class Transaction : ObservableObject
+    public partial class Transaction : ObservableObject, ITransaction
     {
         #region Properties
 
@@ -17,10 +16,10 @@ namespace AndreasReitberger.Stocks.Models
         Guid stockId;
 
         [ObservableProperty]
-        TransactionType? type = null;
+        TransactionType type;
 
         [ObservableProperty]
-        DateTime? dateOfCreation = null;
+        DateTimeOffset? dateOfCreation = null;
 
         [ObservableProperty]
         double amount = 0;

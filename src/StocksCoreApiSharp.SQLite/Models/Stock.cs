@@ -155,6 +155,8 @@ namespace AndreasReitberger.Stocks.SQLite
         [Ignore]
         public bool PositiveGrowth => TotalCosts <= CurrentWorth;
 
+        [Ignore]
+        public bool CostEarnBreakPointReached => TotalCosts <= TotalDividends;
         #endregion
 
         #region Collections

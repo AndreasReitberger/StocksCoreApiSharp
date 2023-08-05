@@ -1,4 +1,5 @@
-﻿using AndreasReitberger.Stocks.Models.Events;
+﻿using AndreasReitberger.Stocks.Interfaces;
+using AndreasReitberger.Stocks.Models.Events;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
@@ -6,7 +7,7 @@ using System.Collections.ObjectModel;
 namespace AndreasReitberger.Stocks.Models
 {
     [ObservableObject]
-    public partial class Marketplace
+    public partial class Marketplace : IMarketplace
     {
         #region Properties
 
@@ -20,10 +21,10 @@ namespace AndreasReitberger.Stocks.Models
         bool isOpen = false;
 
         [ObservableProperty]
-        DateTime? lastRefresh;
+        DateTimeOffset? lastRefresh;
 
         [ObservableProperty]
-        DateTime? dateOfCreation = null;
+        DateTimeOffset? dateOfCreation = null;
 
         #endregion
 

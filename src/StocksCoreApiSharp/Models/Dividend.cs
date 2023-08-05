@@ -1,11 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using AndreasReitberger.Stocks.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;
 
 namespace AndreasReitberger.Stocks.Models
 {
 
     [ObservableObject]
-    public partial class Dividend// : BaseModel
+    public partial class Dividend : IDividend
     {
         #region Properties
         [ObservableProperty]
@@ -15,7 +16,7 @@ namespace AndreasReitberger.Stocks.Models
         Guid stockId;
 
         [ObservableProperty]
-        DateTime? dateOfDividend;
+        DateTimeOffset? dateOfDividend;
 
         [ObservableProperty]
         double quantity = 0;
