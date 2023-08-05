@@ -7,7 +7,7 @@ using AndreasReitberger.Stocks.Interfaces;
 namespace AndreasReitberger.Stocks.Models.Additions
 {
     [ObservableObject]
-    public partial class StockDividendAppointment: IStockDividendAppointment
+    public partial class StockDividendAppointment : IStockDividendAppointment
     {
         #region  Properties
         [ObservableProperty]
