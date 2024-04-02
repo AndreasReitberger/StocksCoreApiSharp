@@ -163,18 +163,15 @@ namespace AndreasReitberger.Stocks.SQLite
 
         [ObservableProperty]
         [property: OneToMany(CascadeOperations = CascadeOperation.All)]
-        ObservableCollection<Transaction> transactions = new();
-        //ObservableCollection<ITransaction> transactions = new();
+        ObservableCollection<Transaction> transactions = [];
 
         [ObservableProperty]
         [property: OneToMany(CascadeOperations = CascadeOperation.All)]
-        ObservableCollection<Dividend> dividends = new();
-        //ObservableCollection<IDividend> dividends = new();
+        ObservableCollection<Dividend> dividends = [];
 
         [ObservableProperty]
         [property: OneToMany(CascadeOperations = CascadeOperation.All)]
-        ObservableCollection<StockPriceRange> priceRanges = new();
-        //ObservableCollection<IStockPriceRange> priceRanges = new();
+        ObservableCollection<StockPriceRange> priceRanges = [];
         partial void OnPriceRangesChanged(ObservableCollection<StockPriceRange> value)
         {
             UpdateOpenClosePrices();

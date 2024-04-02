@@ -1,15 +1,15 @@
-﻿
-using AndreasReitberger.Core.Utilities;
-using AndreasReitberger.Stocks.Interfaces;
+﻿using AndreasReitberger.Stocks.Interfaces;
 using AndreasReitberger.Stocks.SQLite.Additions;
 using AndreasReitberger.Stocks.SQLite.Database;
 using AndreasReitberger.Stocks.SQLite.Events;
+using AndreasReitberger.Stocks.SQLite.Interfaces;
+using CommunityToolkit.Mvvm.ComponentModel;
 using SQLite;
 using System.Diagnostics;
 
 namespace AndreasReitberger.Stocks.SQLite.Utilities
 {
-    public partial class DatabaseHandler : BaseModel//, IDatabaseHandler
+    public partial class DatabaseHandler : ObservableObject, IDatabaseHandler
     {
         #region Instance
         static DatabaseHandler? _instance;
@@ -20,10 +20,7 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
             {
                 lock (Lock)
                 {
-                    if (_instance == null)
-                    {
-                        _instance = new DatabaseHandler();
-                    }
+                    _instance ??= new DatabaseHandler();
                 }
                 return _instance;
             }
@@ -41,179 +38,101 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
         #endregion
 
         #region Properties
-        bool _isInitialized = false;
-        public bool IsInitialized
-        {
-            get => _isInitialized;
-            private set
-            {
-                if (_isInitialized == value) return;
-                _isInitialized = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        bool isInitialized = false;
 
-        string _databasePath = "";
-        public string DatabasePath
-        {
-            get => _databasePath;
-            private set
-            {
-                if (_databasePath == value) return;
-                _databasePath = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        string databasePath = "";
 
-        SQLiteConnection _database;
-        public SQLiteConnection Database
-        {
-            get => _database;
-            private set
-            {
-                if (_database == value) return;
-                _database = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        string passphrase = string.Empty;
 
-        SQLiteAsyncConnection _databaseAsync;
-        public SQLiteAsyncConnection DatabaseAsync
-        {
-            get => _databaseAsync;
-            private set
-            {
-                if (_databaseAsync == value) return;
-                _databaseAsync = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        SQLiteAsyncConnection databaseAsync;
 
-        List<Action> _delegates = new();
-        public List<Action> Delegates
-        {
-            get => _delegates;
-            private set
-            {
-                if (_delegates == value) return;
-                _delegates = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        List<Action> delegates = [];
 
-        List<Type> _tables = new();
-        public List<Type> Tables
-        {
-            get => _tables;
-            private set
-            {
-                if (_tables == value) return;
-                _tables = value;
-                OnPropertyChanged();
-            }
-        }
+        [ObservableProperty]
+        List<Type> tables = [];
+
+        [ObservableProperty]
+        List<Type> defaultTables = [
+            typeof(Depot),
+            typeof(WatchList),
+            typeof(Stock),
+            typeof(StockPriceRange),
+            typeof(StockDepotRelation),
+            typeof(StockWatchListRelation),
+            typeof(StockDividendAppointment),
+            typeof(Marketplace),
+            typeof(StockMarketplaceRelation),
+            typeof(Dividend),
+            typeof(Transaction),
+            ];
         #endregion
 
         #region Collections
-        List<Depot> _depots = new();
-        public List<Depot> Depots
+        [ObservableProperty]
+        List<Depot> depots = [];
+        partial void OnDepotsChanged(List<Depot> value)
         {
-            get => _depots;
-            private set
+            OnDepotsChangedEvent(new DepotsChangedDatabaseEventArgs()
             {
-                if (_depots == value) return;
-                //if (_calculations?.SequenceEqual(value) ?? false) return;
-                _depots = value;
-                OnPropertyChanged();
-                OnDepotsChanged(new DepotsChangedDatabaseEventArgs()
-                {
-                    Depots = value,
-                });
-            }
+                Depots = value,
+            });
         }
 
-        List<WatchList> _watchLists = new();
-        public List<WatchList> WatchLists
+        [ObservableProperty]
+        List<WatchList> watchLists = [];
+        partial void OnWatchListsChanged(List<WatchList> value)
         {
-            get => _watchLists;
-            private set
+            OnWatchListsChangedEvent(new WatchListsChangedDatabaseEventArgs()
             {
-                if (_watchLists == value) return;
-                //if (_calculations?.SequenceEqual(value) ?? false) return;
-                _watchLists = value;
-                OnPropertyChanged();
-                OnWatchListsChanged(new WatchListsChangedDatabaseEventArgs()
-                {
-                    WatchLists = value,
-                });
-            }
+                WatchLists = value,
+            });
         }
 
-        List<Marketplace> _marketplaces = new();
-        public List<Marketplace> Marketplaces
+        [ObservableProperty]
+        List<Marketplace> marketplaces = [];
+        partial void OnMarketplacesChanged(List<Marketplace> value)
         {
-            get => _marketplaces;
-            private set
+            OnMarketplacesChangedEvent(new MarketplacesChangedDatabaseEventArgs()
             {
-                if (_marketplaces == value) return;
-                //if (_calculations?.SequenceEqual(value) ?? false) return;
-                _marketplaces = value;
-                OnPropertyChanged();
-                OnMarketplacesChanged(new MarketplacesChangedDatabaseEventArgs()
-                {
-                    Marketplaces = value,
-                });
-            }
+                Marketplaces = value,
+            });
         }
 
-        List<Stock> _stocks = new();
-        public List<Stock> Stocks
+        [ObservableProperty]
+        List<Stock> stocks = [];
+        partial void OnStocksChanged(List<Stock> value)
         {
-            get => _stocks;
-            private set
+            OnStocksChangedEvent(new StocksChangedDatabaseEventArgs()
             {
-                //if (_printers == value) return;
-                if (_stocks?.SequenceEqual(value) ?? false) return;
-                _stocks = value;
-                OnPropertyChanged();
-                OnStocksChanged(new StocksChangedDatabaseEventArgs()
-                {
-                    Stocks = value,
-                });
-            }
+                Stocks = value,
+            });
         }
 
-        List<Dividend> _dividends = new();
-        public List<Dividend> Dividends
+        [ObservableProperty]
+        List<Dividend> dividends = [];
+        partial void OnDividendsChanged(List<Dividend> value)
         {
-            get => _dividends;
-            private set
+            OnDividendsChangedEvent(new DividendsChangedDatabaseEventArgs()
             {
-                if (_dividends?.SequenceEqual(value) ?? false) return;
-                _dividends = value;
-                OnPropertyChanged();
-                OnDividendsChanged(new DividendsChangedDatabaseEventArgs()
-                {
-                    Dividends = value,
-                });
-            }
+                Dividends = value,
+            });
         }
 
-        List<Transaction> _transactions = new();
-        public List<Transaction> Transactions
+        [ObservableProperty]
+        List<Transaction> transactions = [];
+        partial void OnTransactionsChanged(List<Transaction> value)
         {
-            get => _transactions;
-            private set
+            OnTransactionsChangedEvent(new TransactionsChangedDatabaseEventArgs()
             {
-                if (_transactions?.SequenceEqual(value) ?? false) return;
-                _transactions = value;
-                OnPropertyChanged();
-                OnTransactionsChanged(new TransactionsChangedDatabaseEventArgs()
-                {
-                    Transactions = value,
-                });
-            }
+                Transactions = value,
+            });
         }
+
         #endregion
 
         #region Constructor
@@ -221,11 +140,13 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
         {
 
         }
-        public DatabaseHandler(string databasePath, bool updateInstance = true)
+        public DatabaseHandler(string databasePath, bool updateInstance = true, string? passphrase = null)
         {
-            DatabasePath = databasePath;
-            DatabaseAsync = new SQLiteAsyncConnection(databasePath);
-            Database = new SQLiteConnection(databasePath);
+            // Docs: https://github.com/praeclarum/sqlite-net?tab=readme-ov-file#using-sqlcipher
+            // Some examples: https://github.com/praeclarum/sqlite-net/blob/master/tests/SQLite.Tests/SQLCipherTest.cs
+            SQLiteConnectionString connection = new(databasePath, true, key: passphrase);
+            DatabaseAsync = new SQLiteAsyncConnection(connection);
+
             InitTables();
             IsInitialized = true;
             if (updateInstance) Instance = this;
@@ -234,55 +155,17 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
 
         #region Methods
 
-        #region Private
-
-        #endregion
-
         #region Public
 
         #region Init
-        public void InitTables()
-        {
-            Database?.CreateTable<Depot>();
-            Database?.CreateTable<WatchList>();
-            Database?.CreateTable<Stock>();
-            Database?.CreateTable<StockPriceRange>();
-            Database?.CreateTable<StockDepotRelation>();
-            Database?.CreateTable<StockWatchListRelation>();
-            Database?.CreateTable<StockDividendAppointment>();
-            Database?.CreateTable<Marketplace>();
-            Database?.CreateTable<StockMarketplaceRelation>();
-            Database?.CreateTable<Dividend>();
-            Database?.CreateTable<Transaction>();
-            //Database?.CreateTable<DatabaseSettingsKeyValuePair>();
-        }
+        public void InitTables() => DefaultTables?.ForEach(async type => await DatabaseAsync.CreateTableAsync(type));
+        public async Task InitTablesAsync() => DefaultTables?.ForEach(async type => await DatabaseAsync.CreateTableAsync(type));
 
-        public async Task InitTablesAsync()
-        {
-            await DatabaseAsync.CreateTableAsync<Depot>();
-            await DatabaseAsync.CreateTableAsync<WatchList>();
-            await DatabaseAsync.CreateTableAsync<Stock>();
-            await DatabaseAsync.CreateTableAsync<StockPriceRange>();
-            await DatabaseAsync.CreateTableAsync<StockDepotRelation>();
-            await DatabaseAsync.CreateTableAsync<StockWatchListRelation>();
-            await DatabaseAsync.CreateTableAsync<StockDividendAppointment>();
-            await DatabaseAsync.CreateTableAsync<Marketplace>();
-            await DatabaseAsync.CreateTableAsync<StockMarketplaceRelation>();
-            await DatabaseAsync.CreateTableAsync<Dividend>();
-            await DatabaseAsync.CreateTableAsync<Transaction>();
+        public Task<CreateTableResult> CreateTableAsnyc(Type table) => DatabaseAsync.CreateTableAsync(table);
+        public void CreateTable(Type table) => DatabaseAsync.CreateTableAsync(table);
 
-            //await DatabaseAsync?.CreateTableAsync<DatabaseSettingsKeyValuePair>();
-        }
-
-        public void CreateTable(Type table)
-        {
-            Database?.CreateTable(table);
-        }
-
-        public void CreateTables(List<Type> tables)
-        {
-            Database?.CreateTables(CreateFlags.None, tables?.ToArray());
-        }
+        public Task<CreateTablesResult> CreateTablesAsync(List<Type> tables) => DatabaseAsync.CreateTablesAsync(CreateFlags.None, tables?.ToArray());
+        public void CreateTables(List<Type> tables) => tables.ForEach(async type => await DatabaseAsync.CreateTableAsync(type, CreateFlags.None));
 
         #endregion
 
@@ -296,31 +179,29 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
         #endregion
 
         #region Database
-        public void InitDatabase(string databasePath)
+        public void InitDatabase(string databasePath, string? passphrase = null)
         {
-            DatabaseAsync = new SQLiteAsyncConnection(databasePath);
-            Database = new SQLiteConnection(databasePath);
+            SQLiteConnectionString connection = new(databasePath, true, key: passphrase);
+            DatabaseAsync = new SQLiteAsyncConnection(connection);
+
             InitTables();
             IsInitialized = true;
             Instance = this;
         }
 
-        public async Task InitDatabaseAsync(string databasePath)
+        public async Task InitDatabaseAsync(string databasePath, string? passphrase = null)
         {
-            DatabaseAsync = new SQLiteAsyncConnection(databasePath);
-            Database = new SQLiteConnection(databasePath);
+            SQLiteConnectionString connection = new(databasePath, true, key: passphrase);
+            DatabaseAsync = new SQLiteAsyncConnection(connection);
+
             await InitTablesAsync();
             IsInitialized = true;
             Instance = this;
         }
 
-        public async Task CloseDatabaseAsync()
-        {
-            Database?.Close();
-            await DatabaseAsync?.CloseAsync();
-        }
+        public Task CloseDatabaseAsync() => DatabaseAsync.CloseAsync();
 
-        public List<TableMapping> GetTableMappings(string databasePath = "")
+        public List<TableMapping>? GetTableMappings(string databasePath = "")
         {
             if (DatabaseAsync == null && !string.IsNullOrWhiteSpace(databasePath))
             {
@@ -329,20 +210,14 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
             return DatabaseAsync?.TableMappings.ToList();
         }
 
-        public async Task RebuildAllTableAsync()
-        {
-            await InitTablesAsync();
-        }
+        public Task RebuildAllTableAsync() => InitTablesAsync();
 
         public async Task DropAllTableAsync()
         {
-            //List<Task> tasks = new();
             foreach (TableMapping mapping in DatabaseAsync.TableMappings)
             {
-                await DatabaseAsync?.DropTableAsync(mapping);
-                //tasks.Add(Database?.DeleteAllAsync(mapping));
+                await DatabaseAsync.DropTableAsync(mapping);
             }
-            //await Task.WhenAll(tasks);
         }
 
         public async Task TryDropAllTableAsync()
@@ -351,7 +226,7 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
             {
                 try
                 {
-                    await DatabaseAsync?.DropTableAsync(mapping);
+                    await DatabaseAsync.DropTableAsync(mapping);
                 }
                 catch (Exception)
                 {
@@ -364,27 +239,26 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
         {
             try
             {
-                int result = await DatabaseAsync?.DropTableAsync(mapping);
+                int result = await DatabaseAsync.DropTableAsync(mapping);
                 return result > 0;
             }
             catch (Exception)
             {
                 return false;
             }
-
         }
 
         public async Task ClearAllTableAsync()
         {
             foreach (TableMapping mapping in DatabaseAsync.TableMappings)
             {
-                await DatabaseAsync?.DeleteAllAsync(mapping);
+                await DatabaseAsync.DeleteAllAsync(mapping);
             }
         }
 
         public async Task ClearTableAsync(TableMapping mapping)
         {
-            await DatabaseAsync?.DeleteAllAsync(mapping);
+            await DatabaseAsync.DeleteAllAsync(mapping);
         }
 
         public async Task TryClearAllTableAsync()
@@ -393,7 +267,7 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
             {
                 try
                 {
-                    await DatabaseAsync?.DeleteAllAsync(mapping);
+                    await DatabaseAsync.DeleteAllAsync(mapping);
                 }
                 catch (Exception)
                 {
@@ -402,26 +276,47 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
             }
         }
 
-        public async Task BackupDatabaseAsync(string targetFolder, string databaseName)
+        public Task BackupDatabaseAsync(string targetFolder, string databaseName) => DatabaseAsync.BackupAsync(targetFolder, databaseName);
+
+        public void RekeyDatabase(string newPassword)
         {
-            await DatabaseAsync?.BackupAsync(targetFolder, databaseName);
+            // Bases on: https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/encryption?tabs=netcore-cli
+            SQLiteConnectionWithLock con = DatabaseAsync.GetConnection();
+            SQLiteCommand command = con
+                .CreateCommand(
+                    "SELECT quote($newPassword);",
+                    new Dictionary<string, object>() { { "$newPassword", newPassword } }
+                    );
+            string quotedNewPassword = command.ExecuteScalar<string>();
+            command = con
+                .CreateCommand(
+                    $"PRAGMA rekey = {quotedNewPassword}"
+                    );
+            command.ExecuteNonQuery();
         }
 
-        public void BackupDatabase(string targetFolder, string databaseName)
+        public async Task RekeyDatabaseAsync(string newPassword)
         {
-            Database?.Backup(targetFolder, databaseName);
+            try
+            {
+                // Bases on: https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/encryption?tabs=netcore-cli
+                string quotedNewPassword = await DatabaseAsync
+                    .ExecuteScalarAsync<string>(
+                        $"SELECT quote('{newPassword}');"
+                        );
+                await DatabaseAsync.ExecuteAsync($"PRAGMA rekey = {quotedNewPassword}");
+            }
+            catch (Exception exc)
+            {
+                OnErrorEvent(new ErrorEventArgs(exc));
+            }
         }
 
-        public void Close()
-        {
-            Database?.Close();
-            DatabaseAsync?.CloseAsync();
-        }
+        public Task CloseAsync() => DatabaseAsync.CloseAsync();
+        public void Close() => DatabaseAsync?.CloseAsync();
 
-        public void Dispose()
-        {
-            Close();
-        }
+        public void Dispose() => Close();
+
         #endregion
 
         #region Static
@@ -458,6 +353,11 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
 
             return result;
         }
+
+        #endregion
+
+        #region Clone
+        public object Clone() => MemberwiseClone();
 
         #endregion
 

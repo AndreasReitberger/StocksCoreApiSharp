@@ -11,17 +11,37 @@
 
             #region Method
 
+            public async Task<DatabaseHandler> BuildAsync()
+            {
+                if (!string.IsNullOrEmpty(_databaseHandler.DatabasePath))
+                {
+                    SQLiteConnectionString con =
+                        new(_databaseHandler.DatabasePath, true, key: _databaseHandler.Passphrase);
+                    _databaseHandler.DatabaseAsync = new(con);
+                    _databaseHandler.IsInitialized = true;
+                    if (_databaseHandler.Tables?.Count > 0)
+                    {
+                        await _databaseHandler.CreateTablesAsync(_databaseHandler.Tables);
+                    }
+                    else
+                        await _databaseHandler.InitTablesAsync();
+                }
+                return _databaseHandler;
+            }
             public DatabaseHandler Build()
             {
                 if (!string.IsNullOrEmpty(_databaseHandler.DatabasePath))
                 {
-                    _databaseHandler.Database = new(_databaseHandler.DatabasePath);
-                    _databaseHandler.DatabaseAsync = new(_databaseHandler.DatabasePath);
+                    SQLiteConnectionString con =
+                        new(_databaseHandler.DatabasePath, true, key: _databaseHandler.Passphrase);
+                    _databaseHandler.DatabaseAsync = new(con);
                     _databaseHandler.IsInitialized = true;
                     if (_databaseHandler.Tables?.Count > 0)
                     {
                         _databaseHandler.CreateTables(_databaseHandler.Tables);
                     }
+                    else
+                        _databaseHandler.InitTables();
                 }
                 return _databaseHandler;
             }
@@ -41,6 +61,11 @@
             public DatabaseHandlerBuilder WithTables(List<Type> tables)
             {
                 _databaseHandler.Tables?.AddRange(tables);
+                return this;
+            }
+            public DatabaseHandlerBuilder WithPassphrase(string passphrase)
+            {
+                _databaseHandler.Passphrase = passphrase;
                 return this;
             }
 

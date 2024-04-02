@@ -6,8 +6,7 @@ using AndreasReitberger.Stocks.Interfaces;
 
 namespace AndreasReitberger.Stocks.Models
 {
-    [ObservableObject]
-    public partial class Depot : IDepot
+    public partial class Depot : ObservableObject, IDepot
     {
         #region Properties
 

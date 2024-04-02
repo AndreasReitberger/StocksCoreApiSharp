@@ -4,9 +4,7 @@ using Newtonsoft.Json;
 
 namespace AndreasReitberger.Stocks.Models
 {
-
-    [ObservableObject]
-    public partial class Dividend : IDividend
+    public partial class Dividend : ObservableObject, IDividend
     {
         #region Properties
         [ObservableProperty]
