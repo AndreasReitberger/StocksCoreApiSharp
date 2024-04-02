@@ -60,11 +60,11 @@ namespace AndreasReitberger.Stocks.SQLite.Additions
 
         #endregion
 
-        #region COllections
+        #region Collections
 
         [ObservableProperty]
-        [property: OneToMany]
-        ObservableCollection<DateTimeOffset>? recurrenceExceptions = new();
+        [property: OneToMany(CascadeOperations = CascadeOperation.All)]
+        ObservableCollection<DateTimeOffset>? recurrenceExceptions = [];
 
         #endregion
 

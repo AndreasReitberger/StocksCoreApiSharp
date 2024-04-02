@@ -6,8 +6,7 @@ using System.Collections.ObjectModel;
 
 namespace AndreasReitberger.Stocks.Models
 {
-    [ObservableObject]
-    public partial class Marketplace : IMarketplace
+    public partial class Marketplace : ObservableObject, IMarketplace
     {
         #region Properties
 

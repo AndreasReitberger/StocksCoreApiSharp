@@ -241,13 +241,13 @@ namespace StocksCoreApiSharp.Test.Realms
                     realm.Write(() => realm.Add(myDepot));
 
                     Depot? dbDepot = realm.Find<Depot>(myDepot.Id);
-                    Assert.IsNotNull(dbDepot);
-                    Assert.IsTrue(dbDepot?.Stocks.First().PriceRanges.Count == 2);
+                    Assert.That(dbDepot is not null);
+                    Assert.That(dbDepot?.Stocks.First().PriceRanges.Count == 2);
 
                     string jsonOriginal = JsonConvert.SerializeObject(myDepot, Formatting.Indented);
                     string jsonDatabase = JsonConvert.SerializeObject(dbDepot, Formatting.Indented);
 
-                    //Assert.IsTrue(myDepot == dbDepot);
+                    //Assert.That(myDepot == dbDepot);
                     // Test WatchList
                     WatchList watchList = new("My Watchlist")
                     {
@@ -264,14 +264,14 @@ namespace StocksCoreApiSharp.Test.Realms
 
                     List<WatchList>? loadedWatchLists = realm.All<WatchList>()?.ToList();
 
-                    Assert.IsTrue(loadedWatchLists?.Count > 0, "Watchlist.Count was 0 or null");
+                    Assert.That(loadedWatchLists?.Count > 0, "Watchlist.Count was 0 or null");
                     WatchList list = loadedWatchLists?.FirstOrDefault(l => l.Id == watchList.Id);
-                    Assert.IsNotNull(list);
-                    Assert.IsTrue(list.Stocks?.Count == 2, "Stocks.Count was not 2");
+                    Assert.That(list is not null);
+                    Assert.That(list.Stocks?.Count == 2, "Stocks.Count was not 2");
 
                     // Check if the updating works
                     var stocks = realm.All<Stock>()?.ToList();
-                    Assert.IsTrue(stocks?.Count == 2, "Stocks.Count was not 2 after loading from database");
+                    Assert.That(stocks?.Count == 2, "Stocks.Count was not 2 after loading from database");
                 }
             }
             catch (Exception exc)
@@ -316,7 +316,7 @@ namespace StocksCoreApiSharp.Test.Realms
             myDepot.Refresh();
 
             double cost = basf.TotalCosts;
-            Assert.IsTrue(cost >= 0);
+            Assert.That(cost >= 0);
             double worth = basf.CurrentWorth;
             Assert.That(worth > 0, Is.True);
 
@@ -351,11 +351,11 @@ namespace StocksCoreApiSharp.Test.Realms
             basf.Refresh();
             myDepot.Refresh();
             cost = basf.TotalCosts;
-            Assert.IsTrue(cost >= 0);
+            Assert.That(cost >= 0);
             worth = basf.CurrentWorth;
-            Assert.IsTrue(worth >= 0);
+            Assert.That(worth >= 0);
             var growth = basf.Growth;
-            Assert.Less(growth, 0);
+            Assert.That(growth < 0);
 
             // Sell with loss
             myDepot = new("My depot")
@@ -387,11 +387,11 @@ namespace StocksCoreApiSharp.Test.Realms
             });
             basf.Refresh();
             cost = basf.TotalCosts;
-            Assert.IsTrue(cost >= 0);
+            Assert.That(cost >= 0);
             worth = basf.CurrentWorth;
-            Assert.IsTrue(worth >= 0);
+            Assert.That(worth >= 0);
             growth = basf.Growth;
-            Assert.Less(growth, 0);
+            Assert.That(growth < 0);
         }
 
         [Test]
@@ -419,12 +419,12 @@ namespace StocksCoreApiSharp.Test.Realms
             stock.Transactions.Add(new Transaction() { Amount = 100, Price = 40, DateOfCreation = DateTimeOffset.Now, Type = TransactionType.Buy });
             stock.Dividends.Add(new Dividend() { AmountOfDividend = 2534.12, Quantity = 100, DateOfDividend = DateTimeOffset.Now, Tax = 531.15 });
             stock.Refresh();
-            Assert.IsFalse(stock.CostEarnBreakPointReached);
+            Assert.That(!stock.CostEarnBreakPointReached);
 
             stock.Dividends.Add(new Dividend() { AmountOfDividend = 5534.12, Quantity = 100, DateOfDividend = DateTimeOffset.Now, Tax = 1531.15 });
             stock.Refresh();
 
-            Assert.IsTrue(stock.CostEarnBreakPointReached);
+            Assert.That(stock.CostEarnBreakPointReached);
         }
     }
 

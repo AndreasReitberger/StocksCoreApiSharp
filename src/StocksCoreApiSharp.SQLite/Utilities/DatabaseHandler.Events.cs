@@ -6,6 +6,12 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
     public partial class DatabaseHandler
     {
         #region Events
+        public event EventHandler<ErrorEventArgs> ErrorEvent;
+        protected virtual void OnErrorEvent(ErrorEventArgs e)
+        {
+            ErrorEvent?.Invoke(this, e);
+        }
+
         public event EventHandler<DatabaseEventArgs> DataChanged;
         protected virtual void OnDataChanged(DatabaseEventArgs e)
         {
@@ -19,41 +25,40 @@ namespace AndreasReitberger.Stocks.SQLite.Utilities
         }
 
         public event EventHandler<DepotsChangedDatabaseEventArgs> DepotsChanged;
-        protected virtual void OnDepotsChanged(DepotsChangedDatabaseEventArgs e)
+        protected virtual void OnDepotsChangedEvent(DepotsChangedDatabaseEventArgs e)
         {
             DepotsChanged?.Invoke(this, e);
         }
 
         public event EventHandler<WatchListsChangedDatabaseEventArgs> WatchListsChanged;
-        protected virtual void OnWatchListsChanged(WatchListsChangedDatabaseEventArgs e)
+        protected virtual void OnWatchListsChangedEvent(WatchListsChangedDatabaseEventArgs e)
         {
             WatchListsChanged?.Invoke(this, e);
         }
 
         public event EventHandler<MarketplacesChangedDatabaseEventArgs> MarketplacesChanged;
-        protected virtual void OnMarketplacesChanged(MarketplacesChangedDatabaseEventArgs e)
+        protected virtual void OnMarketplacesChangedEvent(MarketplacesChangedDatabaseEventArgs e)
         {
             MarketplacesChanged?.Invoke(this, e);
         }
 
         public event EventHandler<StocksChangedDatabaseEventArgs> StocksChanged;
-        protected virtual void OnStocksChanged(StocksChangedDatabaseEventArgs e)
+        protected virtual void OnStocksChangedEvent(StocksChangedDatabaseEventArgs e)
         {
             StocksChanged?.Invoke(this, e);
         }
 
         public event EventHandler<DividendsChangedDatabaseEventArgs> DividendsChanged;
-        protected virtual void OnDividendsChanged(DividendsChangedDatabaseEventArgs e)
+        protected virtual void OnDividendsChangedEvent(DividendsChangedDatabaseEventArgs e)
         {
             DividendsChanged?.Invoke(this, e);
         }
 
         public event EventHandler<TransactionsChangedDatabaseEventArgs> TransactionsChanged;
-        protected virtual void OnTransactionsChanged(TransactionsChangedDatabaseEventArgs e)
+        protected virtual void OnTransactionsChangedEvent(TransactionsChangedDatabaseEventArgs e)
         {
             TransactionsChanged?.Invoke(this, e);
         }
-
 
         #endregion
     }

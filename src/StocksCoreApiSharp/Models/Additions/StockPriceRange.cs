@@ -1,5 +1,4 @@
 ﻿
-using AndreasReitberger.Core.Utilities;
 using AndreasReitberger.Stocks.Interfaces;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Newtonsoft.Json;

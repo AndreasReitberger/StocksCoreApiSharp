@@ -1,13 +1,17 @@
+using AndreasReitberger.Shared.Core.Utilities;
 using AndreasReitberger.Stocks.Enums;
 using AndreasReitberger.Stocks.SQLite;
 using AndreasReitberger.Stocks.SQLite.Additions;
 using AndreasReitberger.Stocks.SQLite.Utilities;
 using Newtonsoft.Json;
+using SQLite;
 
 namespace StocksCoreApiSharp.Test.SQLite
 {
     public class Tests
     {
+        string key = "K4eO9Qq4GTO9D0g0aBPzYGp0KsBoYYyFT9S3SX1VgOg=";
+
         [SetUp]
         public void Setup()
         {
@@ -239,13 +243,13 @@ namespace StocksCoreApiSharp.Test.SQLite
 
                     await Task.Delay(20);
                     Depot? dbDepot = await DatabaseHandler.Instance.GetDepotWithChildrenAsync(myDepot.Id);
-                    Assert.IsNotNull(dbDepot);
-                    Assert.IsTrue(dbDepot?.Stocks.First(stock => stock.Name == "BASF").PriceRanges.Count == 2);
+                    Assert.That(dbDepot is not null);
+                    Assert.That(dbDepot?.Stocks.First(stock => stock.Name == "BASF").PriceRanges.Count == 2);
 
                     string jsonOriginal = JsonConvert.SerializeObject(myDepot, Formatting.Indented);
                     string jsonDatabase = JsonConvert.SerializeObject(dbDepot, Formatting.Indented);
 
-                    //Assert.IsTrue(myDepot == dbDepot);
+                    //Assert.That(myDepot == dbDepot);
                     // Test WatchList
                     WatchList watchList = new("My Watchlist")
                     {
@@ -262,15 +266,15 @@ namespace StocksCoreApiSharp.Test.SQLite
                     var loadedWatchLists = await DatabaseHandler.Instance.GetWatchListsWithChildrenAsync();
 
                     await Task.Delay(20);
-                    Assert.IsTrue(loadedWatchLists?.Count > 0, "Watchlist.Count was 0 or null");
-                    WatchList list = loadedWatchLists?.FirstOrDefault(l => l.Id == watchList.Id);
-                    Assert.IsNotNull(list);
-                    Assert.IsTrue(list.Stocks?.Count == 2, "Stocks.Count was not 2");
+                    Assert.That(loadedWatchLists?.Count > 0, "Watchlist.Count was 0 or null");
+                    WatchList? list = loadedWatchLists?.FirstOrDefault(l => l.Id == watchList.Id);
+                    Assert.That(list is not null);
+                    Assert.That(list?.Stocks?.Count == 2, "Stocks.Count was not 2");
 
                     // Check if the updating works
                     await Task.Delay(20);
                     var stocks = await DatabaseHandler.Instance.GetStocksWithChildrenAsync();
-                    Assert.IsTrue(stocks?.Count == 2, "Stocks.Count was not 2 after loading from database");
+                    Assert.That(stocks?.Count == 2, "Stocks.Count was not 2 after loading from database");
 
                     await DatabaseHandler.Instance.CloseDatabaseAsync();
                 }
@@ -316,7 +320,7 @@ namespace StocksCoreApiSharp.Test.SQLite
             myDepot.Stocks.Add(basf);
 
             double cost = basf.TotalCosts;
-            Assert.IsTrue(cost >= 0);
+            Assert.That(cost >= 0);
             double worth = basf.CurrentWorth;
             Assert.That(worth > 0, Is.True);
 
@@ -349,11 +353,11 @@ namespace StocksCoreApiSharp.Test.SQLite
                 Type = TransactionType.Sell,
             });
             cost = basf.TotalCosts;
-            Assert.IsTrue(cost >= 0);
+            Assert.That(cost >= 0);
             worth = basf.CurrentWorth;
-            Assert.IsTrue(worth >= 0);
+            Assert.That(worth >= 0);
             var growth = basf.Growth;
-            Assert.Less(growth, 0);
+            Assert.That(growth < 0);
 
             // Sell with loss
             myDepot = new("My depot")
@@ -384,11 +388,11 @@ namespace StocksCoreApiSharp.Test.SQLite
                 Type = TransactionType.Sell,
             });
             cost = basf.TotalCosts;
-            Assert.IsTrue(cost >= 0);
+            Assert.That(cost >= 0);
             worth = basf.CurrentWorth;
-            Assert.IsTrue(worth >= 0);
+            Assert.That(worth >= 0);
             growth = basf.Growth;
-            Assert.Less(growth, 0);
+            Assert.That(growth < 0);
         }
 
         [Test]
@@ -422,12 +426,137 @@ namespace StocksCoreApiSharp.Test.SQLite
                 }
             };
             stock.Refresh();
-            Assert.IsFalse(stock.CostEarnBreakPointReached);
+            Assert.That(!stock.CostEarnBreakPointReached);
 
             stock.Dividends.Add(new Dividend() { AmountOfDividend = 5534.12, Quantity = 100, DateOfDividend = DateTimeOffset.Now, Tax = 1531.15 });
             stock.Refresh();
 
-            Assert.IsTrue(stock.CostEarnBreakPointReached);
+            Assert.That(stock.CostEarnBreakPointReached);
+        }
+
+        [Test]
+        public async Task DatabaseEncrytpionTestAsync()
+        {
+            try
+            {
+                string databasePath = "testdatabase_secure.db";
+                if (File.Exists(databasePath))
+                    File.Delete(databasePath);
+
+                using DatabaseHandler handler = await new DatabaseHandler.DatabaseHandlerBuilder()
+                    .WithDatabasePath(databasePath)
+                    .WithTable(typeof(Stock))
+                    .WithTables([typeof(Dividend), typeof(Transaction), typeof(StockPriceRange)])
+                    .WithPassphrase(key)
+                    .BuildAsync();
+
+                List<TableMapping>? mappings = handler.GetTableMappings();
+                Assert.That(mappings?.Count > 0);
+
+                await handler.SetStockWithChildrenAsync(new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "BASF",
+                    ISIN = "DE000BASF111",
+                    CurrentRate = 41.05,
+                });
+                List<Stock> stocks = await handler.GetStocksWithChildrenAsync();
+                Assert.That(stocks?.Count > 0);
+
+                await handler.CloseDatabaseAsync();
+                handler.Dispose();
+
+                try
+                {
+                    using DatabaseHandler handlerUnseure = await new DatabaseHandler.DatabaseHandlerBuilder()
+                        .WithDatabasePath(databasePath)
+                        .WithTable(typeof(Stock))
+                        .WithTables([typeof(Dividend), typeof(Transaction), typeof(StockPriceRange)])
+                        //.WithPassphrase(key)
+                        .BuildAsync();
+                    Assert.Fail("Building without the key should throw an exception");
+                }
+                catch (Exception) { }
+
+                try
+                {
+                    using DatabaseHandler handlerUnseure = await new DatabaseHandler.DatabaseHandlerBuilder()
+                        .WithDatabasePath(databasePath)
+                        // Different key also should throw
+                        .WithTable(typeof(Stock))
+                        .WithTables([typeof(Dividend), typeof(Transaction), typeof(StockPriceRange)])
+                        .WithPassphrase(EncryptionManager.GenerateBase64Key())
+                        .BuildAsync();
+                    Assert.Fail("Building without the key should throw an exception");
+                }
+                catch (Exception) { }
+            }
+            catch (Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
+        }
+        [Test]
+        public async Task DatabaseEncrytpionRekeyTestAsync()
+        {
+            try
+            {
+                string databasePath = "testdatabase_secure.db";
+                if (File.Exists(databasePath))
+                    File.Delete(databasePath);
+
+                using DatabaseHandler handler = await new DatabaseHandler.DatabaseHandlerBuilder()
+                    .WithDatabasePath(databasePath)
+                    .WithTable(typeof(Stock))
+                    .WithTables([typeof(Dividend), typeof(Transaction), typeof(StockPriceRange)])
+                    .WithPassphrase(key)
+                    .BuildAsync();
+
+                List<TableMapping>? mappings = handler.GetTableMappings();
+                Assert.That(mappings?.Count > 0);
+
+                await handler.SetStockWithChildrenAsync(new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "BASF",
+                    ISIN = "DE000BASF111",
+                    CurrentRate = 41.05,
+                });
+                List<Stock> stocks = await handler.GetStocksWithChildrenAsync();
+                Assert.That(stocks?.Count > 0);
+
+                // try to rekey
+                string newKey = EncryptionManager.GenerateBase64Key();
+                await handler.RekeyDatabaseAsync(newKey);
+
+                await handler.CloseDatabaseAsync();
+                using DatabaseHandler handler2 = await new DatabaseHandler.DatabaseHandlerBuilder()
+                    .WithDatabasePath(databasePath)
+                    .WithTable(typeof(Stock))
+                    .WithTables([typeof(Dividend), typeof(Transaction), typeof(StockPriceRange)])
+                    .WithPassphrase(newKey)
+                    .BuildAsync();
+
+                stocks = await handler2.GetStocksWithChildrenAsync();
+                Assert.That(stocks?.Count > 0);
+                await handler2.CloseDatabaseAsync();
+                try
+                {
+                    using DatabaseHandler handler3 = await new DatabaseHandler.DatabaseHandlerBuilder()
+                        .WithDatabasePath(databasePath)
+                        .WithTable(typeof(Stock))
+                        .WithTables([typeof(Dividend), typeof(Transaction), typeof(StockPriceRange)])
+                        .WithPassphrase(key)
+                        .BuildAsync();
+                    await handler2.CloseDatabaseAsync();
+                    Assert.Fail("Should throw on wrong key");
+                }
+                catch (Exception) { }
+            }
+            catch (Exception exc)
+            {
+                Assert.Fail(exc.Message);
+            }
         }
     }
 }
