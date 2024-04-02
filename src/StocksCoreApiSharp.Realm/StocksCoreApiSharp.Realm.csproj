@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<Import Project="..\..\common.props" />
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
@@ -15,6 +15,10 @@
 	  <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\licenses\Realm.txt" Link="Licenes\Realm.txt" />
+    <None Include="..\..\licenses\SharedNetCoreLibrary.txt" Link="Licenes\SharedNetCoreLibrary.txt" />
+  </ItemGroup>
 
   <ItemGroup>
 	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
@@ -24,6 +28,15 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StocksCoreApiSharp\StocksCoreApiSharp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Licenes\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\licenses\CommunityToolkit.Mvvm.txt" Link="Licenes\CommunityToolkit.Mvvm.txt" />
+    <None Include="..\..\licenses\Newtonsoft.Json.txt" Link="Licenes\Newtonsoft.Json.txt" />
   </ItemGroup>
 
 </Project>
